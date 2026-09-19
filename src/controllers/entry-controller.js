@@ -47,7 +47,6 @@ export const createEntry = (req, res) => {
 };
 
 // Return a randomised entry
-
 export const getRandomEntry = (req, res) => {
   if (entriesList.length === 0) {
     return res.status(404).json({
@@ -59,4 +58,30 @@ export const getRandomEntry = (req, res) => {
   const randomEntry = entriesList[randomIndex];
 
   return res.status(200).json(randomEntry);
+};
+
+// Delete an entry using its ID.
+export const deleteEntry = (req, res) => {
+  const entryId = Number(req.params.id);
+
+  if (!Number.isInteger(entryId)) {
+    return res.status(400).json({
+      message: "Entry ID must be a number.",
+    });
+  }
+
+  const entryIndex = entriesList.findIndex((entry) => entry.id === entryId);
+
+  if (entryIndex === -1) {
+    return res.status(404).json({
+      message: "Entry not found.",
+    });
+  }
+
+  const [deletedEntry] = entriesList.splice(entryIndex, 1);
+
+  return res.status(200).json({
+    message: "Entry deleted successfully.",
+    entry: deletedEntry,
+  });
 };
