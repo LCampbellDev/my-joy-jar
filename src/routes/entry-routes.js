@@ -1,11 +1,8 @@
 import { Router } from "express";
-
-import {
-  getAllEntries,
-  createEntry,
-  getRandomEntry,
-  deleteEntry,
-} from "../controllers/entry-controller.js";
+import { getAllEntries } from "../controllers/get-all-entries-controller.js";
+import { getRandomEntry } from "../controllers/get-random-entry-controller.js";
+import { createEntry } from "../controllers/create-entry-controller.js";
+import { deleteEntry } from "../controllers/delete-entry-controller.js";
 
 // Express router for entry routes
 const entryRouter = Router();

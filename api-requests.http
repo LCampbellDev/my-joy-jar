@@ -53,3 +53,46 @@ DELETE http://localhost:3000/api/entries/1
 
 ### Test deletion of an unknown entry
 DELETE http://localhost:3000/api/entries/999
+
+
+### Create a valid entry
+POST http://localhost:3000/api/entries
+Content-Type: application/json
+
+{
+  "category": "gratitude",
+  "content": "I am grateful that validation is working."
+}
+
+### Missing category and content
+POST http://localhost:3000/api/entries
+Content-Type: application/json
+
+{}
+
+### Invalid category and incorrect content type
+POST http://localhost:3000/api/entries
+Content-Type: application/json
+
+{
+  "category": "other",
+  "content": 42
+}
+
+### Content contains only whitespace
+POST http://localhost:3000/api/entries
+Content-Type: application/json
+
+{
+  "category": "gratitude",
+  "content": "   "
+}
+
+### Category has the wrong data type
+POST http://localhost:3000/api/entries
+Content-Type: application/json
+
+{
+  "category": 123,
+  "content": "This content is valid."
+}
