@@ -1,16 +1,28 @@
 import entriesList from "../data/entries.js";
 import { ALLOWED_CATEGORIES } from "../constants/entry-categories.js";
+import database from "../config/database.js";
 
-// TODO: Make async when entries are retrieved from MySQL
-export const getAllEntries = (req, res) => {
-  return res.status(200).json(entriesList);
+// Return all entries
+export const getAllEntries = async (req, res) => {
+  const [entries] = await database.execute(`
+    SELECT
+      id,
+      category,
+      content,
+      created_at AS createdAt
+    FROM entries
+    ORDER BY created_at DESC
+  `);
+
+  return res.status(200).json(entries);
 };
 
 // Create a new entry from the category and content in the request body.
 // TODO: Make async when entries are saved to MySQL.
-export const createEntry = (req, res) => {
+export const createEntry = async (req, res) => {
   const { category, content } = req.body ?? {};
 
+  // request validation
   if (!category || !content) {
     return res.status(400).json({
       message: "Category and content are required.",
@@ -29,21 +41,28 @@ export const createEntry = (req, res) => {
     });
   }
 
-  const nextId =
-    entriesList.length === 0
-      ? 1
-      : Math.max(...entriesList.map((entry) => entry.id)) + 1;
+  const [result] = await database.execute(
+    "INSERT INTO entries (category, content) VALUES (?, ?)",
+    [category, content.trim()],
+  );
 
-  const newEntry = {
-    id: nextId,
-    category,
-    content: content.trim(),
-    createdAt: new Date().toISOString(),
-  };
+  // Insert valid data into MySQL
+  const [entries] = await database.execute(
+    `SELECT
+      id,
+      category,
+      content,
+      created_at AS createdAt
+    FROM entries
+    WHERE id = ?`,
+    [result.insertId],
+  );
 
-  entriesList.push(newEntry);
-
-  return res.status(201).json(newEntry);
+  // Return succes status
+  return res.status(201).json({
+    message: "Entry created successfully.",
+    entry: entries[0],
+  });
 };
 
 // Return a randomised entry
