@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS entries (
   content TEXT NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
+  -- Keep these values in sync with src/constants/entry-categories.js
   CONSTRAINT chk_entry_category CHECK (
     category IN (
       'gratitude',

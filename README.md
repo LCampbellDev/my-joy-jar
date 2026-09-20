@@ -2,7 +2,7 @@
 
 MyJoyJar is a personal digital jar for saving gratitude, compliments, and joyful moments—and rediscovering them whenever they are needed.
 
-This repository currently contains a JavaScript and Express REST API. I am building the project incrementally, beginning with the API before adding persistent storage and a frontend.
+This repository contains a JavaScript Express and MySQL REST API. I am building the project incrementally, beginning with the backend API and persistent storage before adding a frontend.
 
 ## Project idea
 
@@ -16,6 +16,50 @@ MyJoyJar brings that idea into a digital application. Entries can record:
 
 Users can view their entries or draw one at random.
 
+## Project structure
+
+Routes and controller logic are kept separate.
+
+Each entry operation has its own controller:
+
+- `get-all-entries-controller.js`
+- `get-random-entry-controller.js`
+- `create-entry-controller.js`
+- `delete-entry-controller.js`
+
+The entry router maps each API endpoint to the relevant controller. The controllers validate requests, execute parameterised MySQL queries, and construct the HTTP responses.
+
+​​`text
+my-joy-jar/
+├── database/
+│   ├── schema.sql
+│   └── seed.sql
+├── src/
+│   ├── config/
+│   │   └── database.js
+│   ├── constants/
+│   │   └── entry-categories.js
+│   ├── controllers/
+│   │   ├── create-entry-controller.js
+│   │   ├── delete-entry-controller.js
+│   │   ├── get-all-entries-controller.js
+│   │   ├── get-random-entry-controller.js
+│   │   └── index.js
+│   ├── routes/
+│   │   └── entry-routes.js
+│   ├── scripts/
+│   │   └── test-db-connection.js
+│   ├── validation/
+│   │   └── validate-entry-input.js
+│   ├── app.js
+│   └── server.js
+├── .env.example
+├── api-requests.http
+├── eslint.config.js
+├── package.json
+└── README.md
+​`
+
 ## Current functionality
 
 The API currently supports:
@@ -27,7 +71,45 @@ The API currently supports:
 | `GET`    | `/api/entries/random` | Retrieve a random entry  |
 | `DELETE` | `/api/entries/:id`    | Delete a specified entry |
 
-Entries are temporarily stored in memory. Any changes are lost when the server restarts.
+## Database setup
+
+MyJoyJar uses MySQL to persist entries.
+
+The `database` directory contains:
+
+- `schema.sql` — creates the `my_joy_jar` database and `entries` table.
+- `seed.sql` — adds optional sample entries for local development and manual testing.
+
+### Environment variables
+
+Copy `.env.example` to a new local file named `.env` and provide your MySQL connection details:
+
+​`env
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=your_mysql_username
+DB_PASSWORD=your_mysql_password
+DB_NAME=my_joy_jar
+​`
+
+The `.env` file is ignored by Git and must not be committed.
+
+### Create and seed the database
+
+Using DBeaver or another MySQL client:
+
+1. Run `database/schema.sql` to create the database and table.
+2. Optionally run `database/seed.sql` to insert sample entries.
+
+Running `seed.sql` more than once will insert duplicate sample entries.
+
+Test the database connection from the project:
+
+​`bash
+npm run db:test
+​`
+
+A successful connection displays the database name and connection time.
 
 ## Entry structure
 
@@ -45,6 +127,28 @@ Supported categories:
 - `gratitude`
 - `compliment`
 - `joyful-moment`
+
+## Manual API testing
+
+The `api-requests.http` file contains example HTTP requests for manually testing the API.
+
+It includes:
+
+- requests to retrieve all entries;
+- requests to create valid entries;
+- invalid requests that demonstrate the validation error responses;
+- a request to retrieve a random entry;
+- requests to delete an entry by ID.
+
+Start the development server before sending the requests:
+
+​`bash
+npm run dev
+​`
+
+The requests can be run using a compatible VS Code HTTP client extension or copied into Postman.
+
+These requests support manual testing and are not automated tests.
 
 ## Creating an entry
 
@@ -68,8 +172,11 @@ A successful request returns `201 Created` and the new entry.
 The API rejects:
 
 - missing categories;
-- missing or blank content;
-- categories outside the supported values.
+- categories with an incorrect data type;
+- categories outside the supported values;
+- missing, blank, or non-string content.
+
+When a request contains multiple validation problems, the API returns all validation errors in an array.
 
 ## Retrieving a random entry
 
@@ -89,41 +196,21 @@ Include the entry ID in the URL:
 DELETE /api/entries/3
 ```
 
-A successful request returns the deleted entry. The API returns `404 Not Found` when no entry has the requested ID.
+A successful request returns the deleted entry. The API returns `400 Bad Request` if the ID is not a positive integer and `404 Not Found` when no entry has the requested ID.
 
 ## Technology
 
 - JavaScript
 - Node.js
 - Express
+- MySQL
+- mysql2
 - Morgan
 - dotenv
 - Nodemon
-- Jest
-- Supertest
 - ESLint
 - Prettier
-
-## Project structure
-
-```text
-my-joy-jar/
-├── src/
-│   ├── constants/
-│   │   └── entry-categories.js
-│   ├── controllers/
-│   │   └── entry-controller.js
-│   ├── data/
-│   │   └── entries.js
-│   ├── routes/
-│   │   └── entry-routes.js
-│   ├── app.js
-│   └── server.js
-├── tests/
-├── eslint.config.js
-├── package.json
-└── README.md
-```
+- Jest and Supertest — installed for future automated testing
 
 ## Running the project locally
 
@@ -131,6 +218,8 @@ my-joy-jar/
 
 - Node.js 18 or later
 - npm
+- MySQL
+- DBeaver or another MySQL client
 
 ### Installation
 
@@ -174,12 +263,6 @@ npm start
 Starts the server with Node.js.
 
 ```bash
-npm test
-```
-
-Runs the Jest test suite.
-
-```bash
 npm run lint
 ```
 
@@ -197,24 +280,35 @@ npm run format:check
 
 Checks formatting without changing files.
 
+​`bash
+npm run db:test
+​`
+
+Tests the connection to the configured MySQL database.
+
+```bash
+npm test
+```
+
+Runs Jest. Automated tests have not yet been added.
+
 ## Engineering goals
 
 This project provides a focused environment for practising:
 
 - designing REST endpoints with Node.js and Express;
-- separating routes, controllers, constants, and data access;
-- validating request data and returning appropriate HTTP responses;
-- testing API behaviour manually and through automated tests;
-- replacing temporary in-memory data with MySQL persistence.
+- separating route definitions, controller logic, constants, and database configuration;
+- validating request data and returning useful HTTP responses;
+- collecting multiple validation errors in an array;
+- executing parameterised MySQL queries;
+- migrating from temporary in-memory data to persistent storage;
+- testing API behaviour manually before introducing automated tests.
 
-The API begins with Express REST routes to strengthen the underlying HTTP, routing, and middleware foundations before exploring GraphQL.
+The API uses Express REST routes to strengthen my understanding of HTTP, routing, middleware, and data persistence before exploring GraphQL.
 
 ## Next steps
 
 - Decide on the automated testing approach for the Express routes.
-- Create a MySQL entries table.
-- Replace the temporary in-memory array with persistent storage.
-- Add database configuration using environment variables.
 - Build an accessible frontend.
 - Add end-to-end tests for complete user journeys.
 
