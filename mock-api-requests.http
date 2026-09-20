@@ -1,0 +1,55 @@
+### Get all entries
+GET http://localhost:3000/api/entries
+
+### Get a random entry
+GET http://localhost:3000/api/entries/random
+
+### Create a gratitude entry
+POST http://localhost:3000/api/entries
+Content-Type: application/json
+
+{
+  "category": "gratitude",
+  "content": "I am grateful for having time to learn today."
+}
+
+### Create a compliment entry
+POST http://localhost:3000/api/entries
+Content-Type: application/json
+
+{
+  "category": "compliment",
+  "content": "Someone told me that I was a good listener."
+}
+
+### Create a joyful-moment entry
+POST http://localhost:3000/api/entries
+Content-Type: application/json
+
+{
+  "category": "joyful-moment",
+  "content": "I enjoyed feeling the sunshine on my face."
+}
+
+### Test validation: invalid category
+POST http://localhost:3000/api/entries
+Content-Type: application/json
+
+{
+  "category": "something-else",
+  "content": "This request should return a validation error."
+}
+
+### Test validation: missing content
+POST http://localhost:3000/api/entries
+Content-Type: application/json
+
+{
+  "category": "gratitude"
+}
+
+### Delete entry with ID 1
+DELETE http://localhost:3000/api/entries/1
+
+### Test deletion of an unknown entry
+DELETE http://localhost:3000/api/entries/999
