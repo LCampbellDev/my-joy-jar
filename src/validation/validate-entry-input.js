@@ -20,8 +20,8 @@ export const validateEntryInput = ({ category, content } = {}) => {
     );
   }
 
-  if (isMissingValue(category)) {
-    validationErrors.push("Category is required.");
+  if (isMissingValue(content)) {
+    validationErrors.push("Content is required.");
   } else if (typeof content !== "string") {
     validationErrors.push("Content must be a string.");
   } else if (!content.trim()) {
