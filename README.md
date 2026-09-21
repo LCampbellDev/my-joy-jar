@@ -29,36 +29,36 @@ Each entry operation has its own controller:
 
 The entry router maps each API endpoint to the relevant controller. The controllers validate requests, execute parameterised MySQL queries, and construct the HTTP responses.
 
-​​`text
+​``​`text
 my-joy-jar/
 ├── database/
-│   ├── schema.sql
-│   └── seed.sql
+│ ├── schema.sql
+│ └── seed.sql
 ├── src/
-│   ├── config/
-│   │   └── database.js
-│   ├── constants/
-│   │   └── entry-categories.js
-│   ├── controllers/
-│   │   ├── create-entry-controller.js
-│   │   ├── delete-entry-controller.js
-│   │   ├── get-all-entries-controller.js
-│   │   ├── get-random-entry-controller.js
-│   │   └── index.js
-│   ├── routes/
-│   │   └── entry-routes.js
-│   ├── scripts/
-│   │   └── test-db-connection.js
-│   ├── validation/
-│   │   └── validate-entry-input.js
-│   ├── app.js
-│   └── server.js
+│ ├── config/
+│ │ └── database.js
+│ ├── constants/
+│ │ └── entry-categories.js
+│ ├── controllers/
+│ │ ├── create-entry-controller.js
+│ │ ├── delete-entry-controller.js
+│ │ ├── get-all-entries-controller.js
+│ │ ├── get-random-entry-controller.js
+│ │ └── index.js
+│ ├── routes/
+│ │ └── entry-routes.js
+│ ├── scripts/
+│ │ └── test-db-connection.js
+│ ├── validation/
+│ │ └── validate-entry-input.js
+│ ├── app.js
+│ └── server.js
 ├── .env.example
 ├── api-requests.http
 ├── eslint.config.js
 ├── package.json
 └── README.md
-​`
+​```
 
 ## Current functionality
 
@@ -84,13 +84,20 @@ The `database` directory contains:
 
 Copy `.env.example` to a new local file named `.env` and provide your MySQL connection details:
 
-​`env
+``​`env
+
+# Application config
+
+PORT=3000
+
+# Database config
+
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=your_mysql_username
 DB_PASSWORD=your_mysql_password
 DB_NAME=my_joy_jar
-​`
+​```
 
 The `.env` file is ignored by Git and must not be committed.
 
@@ -148,7 +155,7 @@ npm run dev
 
 The requests can be run using a compatible VS Code HTTP client extension or copied into Postman.
 
-These requests support manual testing and are not automated tests.
+Morgan logs each HTTP request in the terminal running the development server, including the request method, route, response status, response time, and response size.
 
 ## Creating an entry
 
@@ -216,7 +223,7 @@ A successful request returns the deleted entry. The API returns `400 Bad Request
 
 ### Prerequisites
 
-- Node.js 18 or later
+- Node.js 24 LTS — developed and tested with Node.js 24.20.0
 - npm
 - MySQL
 - DBeaver or another MySQL client
