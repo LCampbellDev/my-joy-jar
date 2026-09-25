@@ -1,8 +1,8 @@
 # MyJoyJar
 
-MyJoyJar is a personal digital jar for saving gratitude, compliments, and joyful moments—and rediscovering them whenever they are needed.
+MyJoyJar is a personal digital jar for saving gratitude, compliments, and joyful moments. And rediscovering them whenever they are needed.
 
-This repository contains a JavaScript Express and MySQL REST API. I am building the project incrementally, beginning with the backend API and persistent storage before adding a frontend.
+This repository contains a JavaScript REST API built with Node.js, Express, and MySQL. I am building the project incrementally, beginning with the backend API and persistent storage before adding a frontend.
 
 ## Project idea
 
@@ -29,7 +29,7 @@ Each entry operation has its own controller:
 
 The entry router maps each API endpoint to the relevant controller. The controllers validate requests, execute parameterised MySQL queries, and construct the HTTP responses.
 
-​``​`text
+```text
 my-joy-jar/
 ├── database/
 │ ├── schema.sql
@@ -58,8 +58,7 @@ my-joy-jar/
 ├── eslint.config.js
 ├── package.json
 └── README.md
-​```
-
+```
 ## Current functionality
 
 The API currently supports:
@@ -84,7 +83,7 @@ The `database` directory contains:
 
 Copy `.env.example` to a new local file named `.env` and provide your MySQL connection details:
 
-``​`env
+```env
 
 # Application config
 
@@ -97,7 +96,7 @@ DB_PORT=3306
 DB_USER=your_mysql_username
 DB_PASSWORD=your_mysql_password
 DB_NAME=my_joy_jar
-​```
+```
 
 The `.env` file is ignored by Git and must not be committed.
 
@@ -112,9 +111,9 @@ Running `seed.sql` more than once will insert duplicate sample entries.
 
 Test the database connection from the project:
 
-​`bash
+```bash
 npm run db:test
-​`
+```
 
 A successful connection displays the database name and connection time.
 
@@ -149,9 +148,9 @@ It includes:
 
 Start the development server before sending the requests:
 
-​`bash
+```bash
 npm run dev
-​`
+```
 
 The requests can be run using a compatible VS Code HTTP client extension or copied into Postman.
 
@@ -249,11 +248,7 @@ Start the development server:
 npm run dev
 ```
 
-The API runs at:
-
-```text
-http://localhost:3000
-```
+The API runs at [http://localhost:3000](http://localhost:3000).
 
 ## Available scripts
 
@@ -287,9 +282,9 @@ npm run format:check
 
 Checks formatting without changing files.
 
-​`bash
+```bash
 npm run db:test
-​`
+```
 
 Tests the connection to the configured MySQL database.
 
