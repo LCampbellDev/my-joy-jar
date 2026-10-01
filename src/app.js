@@ -1,6 +1,18 @@
 import express from "express";
 import morgan from "morgan";
-import entryRouter from "./routes/entry-routes.js";
+
+import database from "./config/database.js";
+import { createMySqlEntryRepository } from "./repositories/mysql-entry-repository.js";
+import { createGetAllEntriesController } from "./controllers/get-all-entries-controller.js";
+import { createEntryRouter } from "./routes/entry-routes.js";
+
+const entryRepository = createMySqlEntryRepository(database);
+
+const getAllEntriesController = createGetAllEntriesController(entryRepository);
+
+const entryRouter = createEntryRouter({
+  getAllEntriesController,
+});
 
 const app = express();
 
