@@ -1,20 +1,17 @@
 import { Router } from "express";
-import {
-  createEntry,
-  deleteEntry,
-  getAllEntries,
-  getRandomEntry,
-} from "../controllers/index.js";
 
-// Express router for entry routes
-const entryRouter = Router();
+export const createEntryRouter = ({
+  getAllEntriesController,
+  getRandomEntryController,
+  deleteEntryController,
+  createEntryController,
+}) => {
+  const entryRouter = Router();
 
-entryRouter.get("/", getAllEntries);
+  entryRouter.get("/", getAllEntriesController);
+  entryRouter.get("/random", getRandomEntryController);
+  entryRouter.delete("/:id", deleteEntryController);
+  entryRouter.post("/", createEntryController);
 
-entryRouter.post("/", createEntry);
-
-entryRouter.get("/random", getRandomEntry);
-
-entryRouter.delete("/:id", deleteEntry);
-
-export default entryRouter;
+  return entryRouter;
+};
