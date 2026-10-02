@@ -4,7 +4,7 @@ export const createGetRandomEntryController = (entryRepository) => {
 
     if (!entry) {
       return res.status(404).json({
-        message: 'No entries are available.',
+        message: "No entries are available.",
       });
     }
 
