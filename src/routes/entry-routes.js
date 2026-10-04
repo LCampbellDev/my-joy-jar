@@ -1,3 +1,5 @@
+// entry = 1 entry in the joy jar
+
 import { Router } from "express";
 
 export const createEntryRouter = ({

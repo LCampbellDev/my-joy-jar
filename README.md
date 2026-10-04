@@ -59,6 +59,7 @@ my-joy-jar/
 ├── package.json
 └── README.md
 ```
+
 ## Current functionality
 
 The API currently supports:
