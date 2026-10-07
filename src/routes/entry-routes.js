@@ -1,19 +1,18 @@
 // entry = 1 entry in the joy jar
-
 import { Router } from "express";
+import { createEntryController } from "../controllers/create-entry-controller";
+import { deleteEntryController } from "../controllers/delete-entry-controller";
+import { getAllEntriesController } from "../controllers/get-all-entries-controller";
+import { getRandomEntryController } from "../controllers/get-random-entry-controller";
 
-export const createEntryRouter = ({
-  getAllEntriesController,
-  getRandomEntryController,
-  deleteEntryController,
-  createEntryController,
-}) => {
-  const entryRouter = Router();
+export const entryRoutes = () => {
+    const router = Router();
 
-  entryRouter.get("/", getAllEntriesController);
-  entryRouter.get("/random", getRandomEntryController);
-  entryRouter.delete("/:id", deleteEntryController);
-  entryRouter.post("/", createEntryController);
+    router.get("/", getAllEntriesController);
+    router.get("/random", getRandomEntryController);
+    router.post("/", createEntryController);
+    router.delete("/:id", deleteEntryController);
 
-  return entryRouter;
+return router;
 };
+

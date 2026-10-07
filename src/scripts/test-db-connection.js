@@ -1,4 +1,4 @@
-import dbPool from "../config/database.js";
+import dbPool from "../config/database";
 
 try {
   const [result] = await dbPool.execute(
