@@ -27,37 +27,60 @@ Each entry operation has its own controller:
 - `create-entry-controller.js`
 - `delete-entry-controller.js`
 
-The entry router maps each API endpoint to the relevant controller. The controllers validate requests, execute parameterised MySQL queries, and construct the HTTP responses.
+The entry router maps each API endpoint to the relevant controller. Controllers validate requests, call repository methods, and construct HTTP responses. The repository handles parameterised MySQL queries.
+
+Controllers log database failures and throw errors with operation-specific context. Central error middleware in `src/app.js` returns a consistent `500 Internal Server Error` JSON response.
 
 ```text
 my-joy-jar/
 ├── database/
-│ ├── schema.sql
-│ └── seed.sql
+│   ├── schema.sql
+│   └── seed.sql
 ├── src/
-│ ├── config/
-│ │ └── database.js
-│ ├── constants/
-│ │ └── entry-categories.js
-│ ├── controllers/
-│ │ ├── create-entry-controller.js
-│ │ ├── delete-entry-controller.js
-│ │ ├── get-all-entries-controller.js
-│ │ ├── get-random-entry-controller.js
-│ │ └── index.js
-│ ├── routes/
-│ │ └── entry-routes.js
-│ ├── scripts/
-│ │ └── test-db-connection.js
-│ ├── validation/
-│ │ └── validate-entry-input.js
-│ ├── app.js
-│ └── server.js
+│   ├── config/
+│   │   └── database.js
+│   ├── constants/
+│   │   └── entry-categories.js
+│   ├── controllers/
+│   │   ├── controller-test-helpers.js
+│   │   ├── mock-entries.js
+│   │   ├── create-entry-controller.js
+│   │   ├── create-entry-controller.test.js
+│   │   ├── delete-entry-controller.js
+│   │   ├── delete-entry-controller.test.js
+│   │   ├── get-all-entries-controller.js
+│   │   ├── get-all-entries-controller.test.js
+│   │   ├── get-random-entry-controller.js
+│   │   └── get-random-entry-controller.test.js
+│   ├── repositories/
+│   │   ├── mysql-entry.repo.js
+│   │   ├── create-entry.repo.test.js
+│   │   ├── delete-entry.repo.test.js
+│   │   ├── get-all-entries.repo.test.js
+│   │   └── get-random-entry.repo.test.js
+│   ├── routes/
+│   │   ├── entries.js
+│   │   ├── entries.test.js
+│   │   ├── create-entry.api.test.js
+│   │   ├── delete-entry.api.test.js
+│   │   ├── get-all-entries.api.test.js
+│   │   └── get-random-entry.api.test.js
+│   ├── scripts/
+│   │   └── test-db-connection.js
+│   ├── validation/
+│   │   ├── is-valid-id.js
+│   │   ├── is-valid-id.test.js
+│   │   ├── validate-entry-input.js
+│   │   └── validate-entry-input.test.js
+│   ├── app.js
+│   └── server.js
 ├── .env.example
+├── .gitignore
 ├── api-requests.http
 ├── eslint.config.js
 ├── package.json
-└── README.md
+├── README.md
+└── webpack.config.cjs
 ```
 
 ## Current functionality
@@ -134,6 +157,69 @@ Supported categories:
 - `gratitude`
 - `compliment`
 - `joyful-moment`
+
+## Automated testing
+
+MyJoyJar uses Jest for unit tests and Supertest for API tests. Tests are kept alongside the code they exercise, with one API test file per endpoint.
+
+### Unit tests
+
+Unit tests cover:
+
+- controller success, validation, empty-result and failure responses;
+- entry input and ID validation;
+- route-to-controller wiring;
+- repository results, parameterised query arguments and database failures.
+
+Controller tests mock the repository. Repository tests exercise the real repository methods with a mocked `database.execute`.
+
+Shared fixtures and mock helpers reduce duplication. Tests use Arrange–Act–Assert, and ESM module mocks are registered before dynamically importing the module under test.
+
+Run unit tests:
+
+```bash
+npm run unit-test
+```
+
+Run unit tests with coverage:
+
+```bash
+npm run unit-test -- --coverage
+```
+
+The current suite contains 53 passing unit tests and reports 100% statement, branch, function and line coverage for the files measured by that run. This report does not include `app.js` or `server.js`.
+
+### API tests
+
+Supertest sends HTTP requests through the configured Express app, exercising routing, JSON request parsing, controllers, validation and error middleware.
+
+The 13 API tests cover all four endpoints, including successful requests, empty results, invalid input, missing entries and repository failures.
+
+The repository is mocked, so API tests do not require a running MySQL database. They verify HTTP behaviour rather than repeating repository interaction assertions.
+
+Run API tests:
+
+```bash
+npm run api-test
+```
+
+Run API tests with coverage:
+
+```bash
+npm run api-test -- --coverage
+```
+
+Run both suites:
+
+```bash
+npm test
+```
+
+### Testing scope
+
+Automated tests use mocked database results. They do not verify SQL execution, schema compatibility or persistence against a real MySQL database.
+
+Manual database and API checks complement these tests. Server startup has also been checked with `npm start`.
 
 ## Manual API testing
 
@@ -217,7 +303,8 @@ A successful request returns the deleted entry. The API returns `400 Bad Request
 - Nodemon
 - ESLint
 - Prettier
-- Jest and Supertest — installed for future automated testing
+- Jest — unit testing
+- Supertest — API testing
 
 ## Running the project locally
 
@@ -293,25 +380,54 @@ Tests the connection to the configured MySQL database.
 npm test
 ```
 
-Runs Jest. Automated tests have not yet been added.
+Runs the unit tests followed by the API tests.
+
+```bash
+npm run unit-test
+```
+
+Runs unit tests, excluding `.api.test.js` files.
+
+```bash
+npm run api-test
+```
+
+Runs the `.api.test.js` files.
+
+```bash
+npm run unit-test -- --coverage
+```
+
+Runs unit tests and generates a coverage report.
+
+```bash
+npm run api-test -- --coverage
+```
+
+Runs API tests and generates a coverage report.
 
 ## Engineering goals
 
 This project provides a focused environment for practising:
 
 - designing REST endpoints with Node.js and Express;
-- separating route definitions, controller logic, constants, and database configuration;
+- applying DRY (Don’t Repeat Yourself) by extracting reusable validation, test fixtures and mock helpers;
+- separating routes, controllers, repositories, validation and configuration;
 - validating request data and returning useful HTTP responses;
 - collecting multiple validation errors in an array;
 - executing parameterised MySQL queries;
 - migrating from temporary in-memory data to persistent storage;
-- testing API behaviour manually before introducing automated tests.
+- writing unit and API tests with Jest and Supertest;
+- mocking dependencies to test success and failure paths;
+- using coverage reports to identify untested code paths;
+- handling unexpected errors consistently.
 
-The API uses Express REST routes to strengthen my understanding of HTTP, routing, middleware, and data persistence before exploring GraphQL.
+The API uses Express REST routes to strengthen my understanding of HTTP, routing, middleware and data persistence before exploring GraphQL.
 
 ## Next steps
 
-- Decide on the automated testing approach for the Express routes.
+- Review the architecture and testing approach.
+- Add integration tests against a dedicated MySQL test database.
 - Build an accessible frontend.
 - Add end-to-end tests for complete user journeys.
 

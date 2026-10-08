@@ -1,52 +1,46 @@
 import { jest } from "@jest/globals";
+import { mockEntries } from './mock-entries';
 
-const entryRepo = {
-  getAll: jest.fn(),
-};
+import {
+  createMockEntryRepo,
+  createMockResponse,
+} from './controller-test-helpers';
 
+const entryRepo = createMockEntryRepo();
+
+// repo mock required for ESM
 jest.unstable_mockModule(
-  "../repositories/mysql-entry-repository",
+  "../repositories/mysql-entry.repo",
   () => ({
     entryRepo,
-  }),
+  }), 
 );
 
 const { getAllEntriesController } = await import(
   "./get-all-entries-controller"
 );
 
-const createMockResponse = () => ({
-  status: jest.fn().mockReturnThis(),
-  json: jest.fn(),
-});
-
 describe("getAllEntriesController", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("returns all entries with status 200", async () => {
+  it('throws a contextual error when retrieving entries fails', async () => {
     // Arrange
-    const entries = [
-      {
-        id: 1,
-        category: "gratitude",
-        content: "I am grateful for learning Jest.",
-        createdAt: "2026-10-03T12:00:00.000Z",
-      },
-    ];
+    const databaseError = new Error('Database unavailable');
 
-    entryRepo.getAll.mockResolvedValue(entries);
+    entryRepo.getAll.mockRejectedValue(databaseError);
 
     const req = {};
     const res = createMockResponse();
 
     // Act
-    await getAllEntriesController(req, res);
+    const result = getAllEntriesController(req, res);
 
     // Assert
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith(entries);
+    await expect(result).rejects.toThrow(
+      'Error fetching all entries: Database unavailable',
+    );
   });
 
   it("returns an empty array with status 200 when no entries exist", async () => {
@@ -64,20 +58,18 @@ describe("getAllEntriesController", () => {
     expect(res.json).toHaveBeenCalledWith([]);
   });
 
-  it("returns status 500 when retrieving entries fails", async () => {
+  it("returns all entries with status 200", async () => {
     // Arrange
-    entryRepo.getAll.mockRejectedValue(new Error("Database unavailable"));
+      entryRepo.getAll.mockResolvedValue(mockEntries);
 
-    const req = {};
-    const res = createMockResponse();
+      const req = {};
+      const res = createMockResponse();
 
     // Act
     await getAllEntriesController(req, res);
 
     // Assert
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({
-      message: "Unable to retrieve entries.",
-    });
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith(mockEntries);
   });
 });

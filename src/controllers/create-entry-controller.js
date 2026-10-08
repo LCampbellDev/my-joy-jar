@@ -1,5 +1,5 @@
-import { entryRepo } from "../repositories/mysql-entry-repository";
-import { validateEntryInput } from "../validation/validate-entry-input";
+import { entryRepo } from '../repositories/mysql-entry.repo';
+import { validateEntryInput } from '../validation/validate-entry-input';
 
 export const createEntryController = async (req, res) => {
   const { category, content } = req.body ?? {};
@@ -16,14 +16,23 @@ export const createEntryController = async (req, res) => {
     });
   }
 
-  const entry = await entryRepo.create({
-    category,
-    content: content.trim(),
-  });
+  try {
+    console.info('Creating entry');
 
-  return res.status(201).json({
-    message: "Entry created successfully.",
-    entry,
-  });
+    const entry = await entryRepo.create({
+      category,
+      content: content.trim(),
+    });
+
+    return res.status(201).json({
+      message: 'Entry created successfully.',
+      entry,
+    });
+  } catch (error) {
+    console.error('Error creating entry', error);
+
+    throw new Error(`Error creating entry: ${error.message}`);
+  }
 };
+
 
