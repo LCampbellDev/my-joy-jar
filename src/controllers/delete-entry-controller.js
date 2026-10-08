@@ -10,18 +10,26 @@ export const deleteEntryController = async (req, res) => {
     });
   }
 
-    const entryId = Number(id);     
+  const entryId = Number(id);
 
-  const entry = await entryRepo.delete(entryId);
+  try {
+    console.info('Deleting entry');
 
-  if (!entry) {
-    return res.status(404).json({
-      message: "Entry not found.",
+    const entry = await entryRepo.delete(entryId);
+
+    if (!entry) {
+      return res.status(404).json({
+        message: 'Entry not found.',
+      });
+    }
+
+    return res.status(200).json({
+      message: 'Entry deleted successfully.',
+      entry,
     });
-  }
+  } catch (error) {
+    console.error('Error deleting entry', error);
 
-  return res.status(200).json({
-    message: "Entry deleted successfully.",
-    entry,
-  });
+    throw new Error(`Error deleting entry: ${error.message}`);
+  }
 };

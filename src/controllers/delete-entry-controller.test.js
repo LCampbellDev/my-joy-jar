@@ -17,31 +17,125 @@ jest.unstable_mockModule(
   }),
 );
 
+const mockEntry = mockEntries[0];
+
+// Repo mock required for ESM
+jest.unstable_mockModule(
+  '../repositories/mysql-entry-repository',
+  () => ({
+    entryRepo,
+  }),
+);
+
 const { deleteEntryController } = await import(
-  "./delete-entry-controller"
+  './delete-entry-controller'
 );
 
 describe('deleteEntryController', () => {
-  it.todo('deletes an entry and returns status 200');
-  it.todo('returns status 400 when the entry ID is invalid');
-  it.todo('returns status 404 when the entry does not exist');
-  it.todo('logs and throws when deleting an entry fails');
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('deletes an entry and returns status 200', async () => {
+    // Arrange
+    entryRepo.delete.mockResolvedValue(mockEntry);
+
+    const req = {
+      params: {
+        id: String(mockEntry.id),
+      },
+    };
+
+    const res = createMockResponse();
+
+    // Act
+    await deleteEntryController(req, res);
+
+    // Assert
+    expect(entryRepo.delete).toHaveBeenCalledWith(mockEntry.id);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Entry deleted successfully.',
+      entry: mockEntry,
+    });
+  });
+
+  it('returns status 400 when the entry ID is invalid', async () => {
+    // Arrange
+    const req = {
+      params: {
+        id: 'abc',
+      },
+    };
+
+    const res = createMockResponse();
+
+    // Act
+    await deleteEntryController(req, res);
+
+    // Assert
+    expect(entryRepo.delete).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Entry ID must be a positive integer.',
+    });
+  });
+
+  it('returns status 404 when the entry does not exist', async () => {
+    // Arrange
+    entryRepo.delete.mockResolvedValue(null);
+
+    const req = {
+      params: {
+        id: String(mockEntry.id),
+      },
+    };
+
+    const res = createMockResponse();
+
+    // Act
+    await deleteEntryController(req, res);
+
+    // Assert
+    expect(entryRepo.delete).toHaveBeenCalledWith(mockEntry.id);
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Entry not found.',
+    });
+  });
+
+  it('logs and throws when deleting an entry fails', async () => {
+    // Arrange
+    const databaseError = new Error('Database unavailable');
+    entryRepo.delete.mockRejectedValue(databaseError);
+
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+
+    const req = {
+      params: {
+        id: String(mockEntry.id),
+      },
+    };
+
+    const res = createMockResponse();
+
+    try {
+      // Act and Assert
+      await expect(deleteEntryController(req, res)).rejects.toThrow(
+        'Error deleting entry: Database unavailable',
+      );
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error deleting entry',
+        databaseError,
+      );
+
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
+  });
 });
-
-
-/*
-describe("getAllEntriesController", () => {
-  // Success
-  // - returns all entries with status 200
-
-  entryRepo.delete.mockResolvedValue(mockEntry);
-
-  // Empty
-  // - returns an empty array with status 200
-
-  // Failure
-  // - repository rejects
-  // - logs an error explaining that entries could not be retrieved
-  // - throws an error containing retrieval context
-});
-*/
