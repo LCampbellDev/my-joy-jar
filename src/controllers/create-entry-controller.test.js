@@ -111,4 +111,28 @@ describe('createEntryController', () => {
       entry: mockEntry,
     });
   });
+
+  it('throws a contextual error when creating an entry fails', async () => {
+    // Arrange
+    entryRepo.create.mockRejectedValue(
+      new Error('Database unavailable'),
+    );
+
+    const req = {
+      body: {
+        category: mockEntry.category,
+        content: mockEntry.content,
+      },
+    };
+
+    const res = createMockResponse();
+
+    // Act and Assert
+    await expect(createEntryController(req, res)).rejects.toThrow(
+      'Error creating entry: Database unavailable',
+    );
+
+    expect(res.status).not.toHaveBeenCalled();
+    expect(res.json).not.toHaveBeenCalled();
+  });
 });
