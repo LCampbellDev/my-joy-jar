@@ -62,4 +62,21 @@ const { default: app } = await import('../app');
           message: 'Entry not found.',
         });
       });
+
+      it('returns status 500 when deleting an entry fails', async () => {
+        // Arrange
+        entryRepo.delete.mockRejectedValue(
+          new Error('Database unavailable'),
+        );
+
+        // Act
+        const response = await request(app)
+          .delete(`/api/entries/${mockEntries[0].id}`);
+
+        // Assert
+        expect(response.status).toEqual(500);
+        expect(response.body).toEqual({
+          message: 'Something went wrong. Please try again later.',
+        });
+      });
     });

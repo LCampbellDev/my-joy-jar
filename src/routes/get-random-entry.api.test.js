@@ -42,4 +42,20 @@ describe('GET /api/entries/random', () => {
     // Assert
     expect(response.status).toEqual(404);
   });
+
+  it('returns status 500 when retrieving a random entry fails', async () => {
+    // Arrange
+    entryRepo.getRandom.mockRejectedValue(
+      new Error('Database unavailable'),
+    );
+
+    // Act
+    const response = await request(app).get('/api/entries/random');
+
+    // Assert
+    expect(response.status).toEqual(500);
+    expect(response.body).toEqual({
+      message: 'Something went wrong. Please try again later.',
+    });
+  });
 });

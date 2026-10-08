@@ -57,4 +57,27 @@ const { default: app } = await import('../app');
       // Assert
       expect(response.status).toEqual(400);
     });
+
+    it('returns status 500 when creating an entry fails', async () => {
+        // Arrange
+      entryRepo.create.mockRejectedValue(
+        new Error('Database unavailable'),
+      );
+
+      const input = {
+        category: mockEntries[0].category,
+        content: mockEntries[0].content,
+      };
+
+      // Act
+      const response = await request(app)
+        .post('/api/entries')
+        .send(input);
+
+      // Assert
+      expect(response.status).toEqual(500);
+      expect(response.body).toEqual({
+        message: 'Something went wrong. Please try again later.',
+      });
+    });
   });
