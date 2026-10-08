@@ -1,5 +1,4 @@
-import { entryRepo } from "../repositories/mysql-entry-repository";
-
+import { entryRepo } from '../repositories/mysql-entry-repository';
 export const getRandomEntryController = async (req, res) => {
   const entry = await entryRepo.getRandom();
 
