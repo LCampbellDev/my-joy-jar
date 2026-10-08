@@ -1,12 +1,9 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
+import { mockEntries } from '../controllers/mock-entries';
+import { createMockEntryRepo } from '../controllers/controller-test-helpers';
 
-const entryRepo = {
-  getAll: jest.fn(),
-  getRandom: jest.fn(),
-  create: jest.fn(),
-  delete: jest.fn(),
-};
+const entryRepo = createMockEntryRepo();
 
 jest.unstable_mockModule(
   '../repositories/mysql-entry-repository',
@@ -24,22 +21,13 @@ describe('GET /api/entries', () => {
 
   it('returns all entries with status 200', async () => {
     // Arrange
-    const entries = [
-      {
-        id: 1,
-        category: 'gratitude',
-        content: 'I am grateful for learning API testing.',
-        createdAt: '2026-10-03T12:00:00.000Z',
-      },
-    ];
-
-    entryRepo.getAll.mockResolvedValue(entries);
+    entryRepo.getAll.mockResolvedValue(mockEntries);
 
     // Act
     const response = await request(app).get('/api/entries');
 
     // Assert
     expect(response.status).toEqual(200);
-    expect(response.body).toEqual(entries);
+    expect(response.body).toEqual(mockEntries);
   });
 });
