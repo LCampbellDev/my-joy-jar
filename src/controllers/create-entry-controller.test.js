@@ -1,5 +1,5 @@
 import { jest } from "@jest/globals";
-import { mockEntries } from './mock-entries';
+import { mockEntry } from './mock-entries';
 
 import {
   createMockEntryRepo,
@@ -20,25 +20,95 @@ const { createEntryController } = await import(
   "./create-entry-controller"
 );
 
+jest.unstable_mockModule(
+  '../repositories/mysql-entry-repository',
+  () => ({
+    entryRepo,
+  }),
+);
+
 describe('createEntryController', () => {
-  it.todo('creates an entry and returns status 201');
-  it.todo('returns status 400 when the input is invalid');
-  it.todo('logs and throws when creating an entry fails');
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('creates an entry and returns status 201', async () => {
+    // Arrange
+    entryRepo.create.mockResolvedValue(mockEntry);
+
+    const req = {
+      body: {
+        category: mockEntry.category,
+        content: `  ${mockEntry.content}  `,
+      },
+    };
+
+    const res = createMockResponse();
+
+    // Act
+    await createEntryController(req, res);
+
+    // Assert
+    expect(entryRepo.create).toHaveBeenCalledWith({
+    category: mockEntry.category,
+    content: mockEntry.content,
+    });
+  });
+
+  it('returns status 400 when the input is invalid', async () => {
+    // Arrange
+    const req = {
+      body: {
+        content: 'A valid piece of content.',
+      },
+    };
+
+    const res = createMockResponse();
+
+    // Act
+    await createEntryController(req, res);
+
+    // Assert
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Validation errors.',
+      errors: ['Category is required.'],
+    });
+
+    expect(entryRepo.create).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Validation errors.',
+      errors: ['Category is required.'],
+    });
+  });
+
+  it('creates an entry and returns status 201', async () => {
+    // Arrange
+    entryRepo.create.mockResolvedValue(mockEntry);
+
+    const req = {
+      body: {
+        category: mockEntry.category,
+        content: `  ${mockEntry.content}  `,
+      },
+    };
+
+    const res = createMockResponse();
+
+    // Act
+    await createEntryController(req, res);
+
+    // Assert
+    expect(entryRepo.create).toHaveBeenCalledWith({
+      category: mockEntry.category,
+      content: mockEntry.content,
+    });
+
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Entry created successfully.',
+      entry: mockEntry,
+    });
+  });
 });
-
-/*
-describe("getAllEntriesController", () => {
-  // Success
-  // - returns all entries with status 200
-
-  entryRepo.create.mockResolvedValue(mockEntry);
-
-  // Empty
-  // - returns an empty array with status 200
-
-  // Failure
-  // - repository rejects
-  // - logs an error explaining that entries could not be retrieved
-  // - throws an error containing retrieval context
-});
-*/

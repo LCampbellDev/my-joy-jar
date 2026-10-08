@@ -16,14 +16,23 @@ export const createEntryController = async (req, res) => {
     });
   }
 
-  const entry = await entryRepo.create({
-    category,
-    content: content.trim(),
-  });
+  try {
+    console.info('Creating entry');
 
-  return res.status(201).json({
-    message: "Entry created successfully.",
-    entry,
-  });
+    const entry = await entryRepo.create({
+      category,
+      content: content.trim(),
+    });
+
+    return res.status(201).json({
+      message: 'Entry created successfully.',
+      entry,
+    });
+  } catch (error) {
+    console.error('Error creating entry', error);
+
+    throw new Error(`Error creating entry: ${error.message}`);
+  }
 };
+
 
