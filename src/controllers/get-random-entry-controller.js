@@ -1,13 +1,13 @@
-export const createGetRandomEntryController = (entryRepository) => {
-  return async (req, res) => {
-    const entry = await entryRepository.getRandomEntry();
+import { entryRepo } from "../repositories/mysql-entry-repository";
 
-    if (!entry) {
-      return res.status(404).json({
-        message: "No entries are available.",
-      });
-    }
+export const getRandomEntryController = async (req, res) => {
+  const entry = await entryRepo.getRandom();
 
-    return res.status(200).json(entry);
-  };
+  if (!entry) {
+    return res.status(404).json({
+      message: "No entries are available.",
+    });
+  }
+
+  return res.status(200).json(entry);
 };

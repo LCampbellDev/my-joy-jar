@@ -1,4 +1,4 @@
-import { validateEntryInput } from "./validate-entry-input.js";
+import { validateEntryInput } from "./validate-entry-input";
 
 describe("validateEntryInput", () => {
   // Valid cases

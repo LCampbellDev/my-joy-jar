@@ -1,78 +1,76 @@
 // MySQL data access operations for entries stored in the MyJoyJar DB
 
-export const createMySqlEntryRepository = (databaseConnection) => {
-  // Private helper shared by create and delete operations.
-  const getEntryById = async (id) => {
-    const [entries] = await databaseConnection.execute(
+import database from "../config/database";
+
+// Private helper shared by create and delete operations.
+const getById = async (id) => {
+  const [entries] = await database.execute(
+    `SELECT
+      id,
+      category,
+      content,
+      created_at AS createdAt
+    FROM entries
+    WHERE id = ?`,
+    [id],
+  );
+
+  return entries[0] ?? null;
+};
+
+export const entryRepo = {
+  // Return all entries, or an empty array if none exist.
+  async getAll() {
+    const [entries] = await database.execute(
       `SELECT
         id,
         category,
         content,
         created_at AS createdAt
       FROM entries
-      WHERE id = ?`,
-      [id],
+      ORDER BY created_at DESC`,
+    );
+
+    return entries;
+  },
+
+  // Return one random entry, or null if the jar is empty.
+  async getRandom() {
+    const [entries] = await database.execute(
+      `SELECT
+        id,
+        category,
+        content,
+        created_at AS createdAt
+      FROM entries
+      ORDER BY RAND()
+      LIMIT 1`,
     );
 
     return entries[0] ?? null;
-  };
+  },
 
-  return {
-    // Return all MyJoyJar entries, or empty array if none exist
-    async getAllEntries() {
-      const [entries] = await databaseConnection.execute(
-        `SELECT
-          id,
-          category,
-          content,
-          created_at AS createdAt
-        FROM entries
-        ORDER BY created_at DESC`,
-      );
+  // Insert and return a new entry.
+  async create({ category, content }) {
+    const [result] = await database.execute(
+      `INSERT INTO entries (category, content)
+       VALUES (?, ?)`,
+      [category, content],
+    );
 
-      return entries;
-    },
+    return getById(result.insertId);
+  },
 
-    // Return one random entry, or null if the jar is empty
-    async getRandomEntry() {
-      const [entries] = await databaseConnection.execute(
-        `SELECT
-          id,
-          category,
-          content,
-          created_at AS createdAt
-        FROM entries
-        ORDER BY RAND()
-        LIMIT 1`,
-      );
+  // Delete and return an entry, or null if it does not exist.
+  async delete(id) {
+    const entry = await getById(id);
 
-      return entries[0] ?? null;
-    },
+    if (!entry) {
+      return null;
+    }
 
-    // Insert and return a new entry.
-    async createEntry({ category, content }) {
-      const [result] = await databaseConnection.execute(
-        `INSERT INTO entries (category, content)
-         VALUES (?, ?)`,
-        [category, content],
-      );
+    await database.execute("DELETE FROM entries WHERE id = ?", [id]);
 
-      return getEntryById(result.insertId);
-    },
-
-    // Delete and return an entry, or null if it does not exist.
-    async deleteEntryById(id) {
-      const entry = await getEntryById(id);
-
-      if (!entry) {
-        return null;
-      }
-
-      await databaseConnection.execute("DELETE FROM entries WHERE id = ?", [
-        id,
-      ]);
-
-      return entry;
-    },
-  };
+    return entry;
+  },
 };

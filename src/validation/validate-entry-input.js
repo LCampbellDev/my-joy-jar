@@ -1,4 +1,4 @@
-import { ALLOWED_CATEGORIES } from "../constants/entry-categories.js";
+import { ALLOWED_CATEGORIES } from "../constants/entry-categories";
 
 const isMissingValue = (value) =>
   value === undefined || value === null || value === "";
