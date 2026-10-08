@@ -42,4 +42,20 @@ describe('GET /api/entries', () => {
     expect(response.status).toEqual(200);
     expect(response.body).toEqual([]);
     });
+
+      it('returns status 500 when retrieving entries fails', async () => {
+    // Arrange
+    entryRepo.getAll.mockRejectedValue(
+      new Error('Database unavailable'),
+    );
+
+    // Act
+    const response = await request(app).get('/api/entries');
+
+    // Assert
+    expect(response.status).toEqual(500);
+    expect(response.body).toEqual({
+      message: 'Something went wrong. Please try again later.',
+    });
   });
+});
