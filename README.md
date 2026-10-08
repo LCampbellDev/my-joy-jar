@@ -34,32 +34,53 @@ Controllers log database failures and throw errors with operation-specific conte
 ```text
 my-joy-jar/
 ├── database/
-│ ├── schema.sql
-│ └── seed.sql
+│   ├── schema.sql
+│   └── seed.sql
 ├── src/
-│ ├── config/
-│ │ └── database.js
-│ ├── constants/
-│ │ └── entry-categories.js
-│ ├── controllers/
-│ │ ├── create-entry-controller.js
-│ │ ├── delete-entry-controller.js
-│ │ ├── get-all-entries-controller.js
-│ │ ├── get-random-entry-controller.js
-│ │ └── index.js
-│ ├── routes/
-│ │ └── entry-routes.js
-│ ├── scripts/
-│ │ └── test-db-connection.js
-│ ├── validation/
-│ │ └── validate-entry-input.js
-│ ├── app.js
-│ └── server.js
+│   ├── config/
+│   │   └── database.js
+│   ├── constants/
+│   │   └── entry-categories.js
+│   ├── controllers/
+│   │   ├── controller-test-helpers.js
+│   │   ├── mock-entries.js
+│   │   ├── create-entry-controller.js
+│   │   ├── create-entry-controller.test.js
+│   │   ├── delete-entry-controller.js
+│   │   ├── delete-entry-controller.test.js
+│   │   ├── get-all-entries-controller.js
+│   │   ├── get-all-entries-controller.test.js
+│   │   ├── get-random-entry-controller.js
+│   │   └── get-random-entry-controller.test.js
+│   ├── repositories/
+│   │   ├── mysql-entry.repo.js
+│   │   ├── create-entry.repo.test.js
+│   │   ├── delete-entry.repo.test.js
+│   │   ├── get-all-entries.repo.test.js
+│   │   └── get-random-entry.repo.test.js
+│   ├── routes/
+│   │   ├── entries.js
+│   │   ├── entries.test.js
+│   │   ├── create-entry.api.test.js
+│   │   ├── delete-entry.api.test.js
+│   │   ├── get-all-entries.api.test.js
+│   │   └── get-random-entry.api.test.js
+│   ├── scripts/
+│   │   └── test-db-connection.js
+│   ├── validation/
+│   │   ├── is-valid-id.js
+│   │   ├── is-valid-id.test.js
+│   │   ├── validate-entry-input.js
+│   │   └── validate-entry-input.test.js
+│   ├── app.js
+│   └── server.js
 ├── .env.example
+├── .gitignore
 ├── api-requests.http
 ├── eslint.config.js
 ├── package.json
-└── README.md
+├── README.md
+└── webpack.config.cjs
 ```
 
 ## Current functionality
