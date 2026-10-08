@@ -1,4 +1,4 @@
-import { entryRepo } from '../repositories/mysql-entry-repository';
+import { entryRepo } from '../repositories/mysql-entry.repo';
 import { isValidId } from '../validation/is-valid-id';
 
 export const deleteEntryController = async (req, res) => {

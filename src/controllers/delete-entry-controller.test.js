@@ -11,7 +11,7 @@ const entryRepo = createMockEntryRepo();
 
 // repo mock required for ESM
 jest.unstable_mockModule(
-  "../repositories/mysql-entry-repository",
+  "../repositories/mysql-entry.repo",
   () => ({
     entryRepo,
   }),
@@ -21,7 +21,7 @@ const mockEntry = mockEntries[0];
 
 // Repo mock required for ESM
 jest.unstable_mockModule(
-  '../repositories/mysql-entry-repository',
+  '../repositories/mysql-entry.repo',
   () => ({
     entryRepo,
   }),

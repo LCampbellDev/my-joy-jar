@@ -1,4 +1,4 @@
-import { entryRepo } from '../repositories/mysql-entry-repository';
+import { entryRepo } from '../repositories/mysql-entry.repo';
 import { validateEntryInput } from '../validation/validate-entry-input';
 
 export const createEntryController = async (req, res) => {

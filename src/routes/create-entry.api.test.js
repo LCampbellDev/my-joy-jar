@@ -7,7 +7,7 @@ import { createMockEntryRepo } from '../controllers/controller-test-helpers';
 const entryRepo = createMockEntryRepo();
 
 jest.unstable_mockModule(
-  '../repositories/mysql-entry-repository',
+  '../repositories/mysql-entry.repo',
   () => ({
     entryRepo,
   }),
