@@ -55,6 +55,23 @@ describe('createEntryController', () => {
     });
   });
 
+  it('returns status 400 when the request body is missing', async () => {
+    // Arrange
+    const req = {};
+    const res = createMockResponse();
+
+    // Act
+    await createEntryController(req, res);
+
+    // Assert
+    expect(entryRepo.create).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Validation errors.',
+      errors: expect.any(Array),
+    });
+  });
+
   it('returns status 400 when the input is invalid', async () => {
     // Arrange
     const req = {
