@@ -1,4 +1,4 @@
-import { entryRepo } from "../repositories/mysql-entry-repository";
+import { entryRepo } from '../repositories/mysql-entry-repository';
 
 export const getAllEntriesController = async (req, res) => {
   try {
