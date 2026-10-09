@@ -1,10 +1,24 @@
 import { ALLOWED_CATEGORIES } from "../constants/entry-categories";
 
+/**
+ * Checks whether a value is undefined, null or an empty string.
+ *
+ * @private
+ * @param {*} value - The value to check.
+ * @returns {boolean} Whether the value is missing.
+ */
 const isMissingValue = (value) =>
   value === undefined || value === null || value === "";
 
-// Validate the category and content required to create (POST)
-// or fully replace (PUT) an entry
+/**
+ * Validates the category and content required for a complete entry.
+ * Collects all validation errors without modifying the input.
+ *
+ * @param {Object} [input={}] - The entry data to validate.
+ * @param {*} [input.category] - Must be a supported category string.
+ * @param {*} [input.content] - Must be a string containing non-whitespace text.
+ * @returns {string[]} Validation messages, or an empty array if valid.
+ */
 /* TODO: If PATCH support is added, create a separate partial-update
 validator or adapt this validator to support optional fields. */
 export const validateEntryInput = ({ category, content } = {}) => {

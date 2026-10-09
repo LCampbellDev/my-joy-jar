@@ -1,3 +1,10 @@
+/**
+ * Checks connectivity to the configured MySQL database.
+ * Logs the database name and server time on success.
+ * Sets exit code 1 if the query fails and closes the pool in all cases.
+ *
+ * @file
+ */
 import dbPool from "../config/database";
 
 try {

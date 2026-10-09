@@ -1,3 +1,8 @@
+/**
+ * Shared promise-based MySQL connection pool.
+ * Uses connection settings loaded from environment variables.
+ * Reused by repository methods to execute database queries.
+ */
 import "dotenv/config";
 import mysql from "mysql2/promise";
 

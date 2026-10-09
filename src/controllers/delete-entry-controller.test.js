@@ -1,42 +1,33 @@
 import { jest } from "@jest/globals";
-import { mockEntries } from './mock-entries';
+import { mockEntries } from "./mock-entries";
 
 import {
   createMockEntryRepo,
   createMockResponse,
-} from './controller-test-helpers';
-
+} from "./controller-test-helpers";
 
 const entryRepo = createMockEntryRepo();
 
 // repo mock required for ESM
-jest.unstable_mockModule(
-  "../repositories/mysql-entry.repo",
-  () => ({
-    entryRepo,
-  }),
-);
+jest.unstable_mockModule("../repositories/mysql-entry.repo", () => ({
+  entryRepo,
+}));
 
 const mockEntry = mockEntries[0];
 
 // Repo mock required for ESM
-jest.unstable_mockModule(
-  '../repositories/mysql-entry.repo',
-  () => ({
-    entryRepo,
-  }),
-);
+jest.unstable_mockModule("../repositories/mysql-entry.repo", () => ({
+  entryRepo,
+}));
 
-const { deleteEntryController } = await import(
-  './delete-entry-controller'
-);
+const { deleteEntryController } = await import("./delete-entry-controller");
 
-describe('deleteEntryController', () => {
+describe("deleteEntryController", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('deletes an entry and returns status 200', async () => {
+  it("deletes an entry and returns status 200", async () => {
     // Arrange
     entryRepo.delete.mockResolvedValue(mockEntry);
 
@@ -55,16 +46,16 @@ describe('deleteEntryController', () => {
     expect(entryRepo.delete).toHaveBeenCalledWith(mockEntry.id);
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
-      message: 'Entry deleted successfully.',
+      message: "Entry deleted successfully.",
       entry: mockEntry,
     });
   });
 
-  it('returns status 400 when the entry ID is invalid', async () => {
+  it("returns status 400 when the entry ID is invalid", async () => {
     // Arrange
     const req = {
       params: {
-        id: 'abc',
+        id: "abc",
       },
     };
 
@@ -77,11 +68,11 @@ describe('deleteEntryController', () => {
     expect(entryRepo.delete).not.toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
-      message: 'Entry ID must be a positive integer.',
+      message: "Entry ID must be a positive integer.",
     });
   });
 
-  it('returns status 404 when the entry does not exist', async () => {
+  it("returns status 404 when the entry does not exist", async () => {
     // Arrange
     entryRepo.delete.mockResolvedValue(null);
 
@@ -100,17 +91,17 @@ describe('deleteEntryController', () => {
     expect(entryRepo.delete).toHaveBeenCalledWith(mockEntry.id);
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({
-      message: 'Entry not found.',
+      message: "Entry not found.",
     });
   });
 
-  it('logs and throws when deleting an entry fails', async () => {
+  it("logs and throws when deleting an entry fails", async () => {
     // Arrange
-    const databaseError = new Error('Database unavailable');
+    const databaseError = new Error("Database unavailable");
     entryRepo.delete.mockRejectedValue(databaseError);
 
     const consoleErrorSpy = jest
-      .spyOn(console, 'error')
+      .spyOn(console, "error")
       .mockImplementation(() => {});
 
     const req = {
@@ -124,11 +115,11 @@ describe('deleteEntryController', () => {
     try {
       // Act and Assert
       await expect(deleteEntryController(req, res)).rejects.toThrow(
-        'Error deleting entry: Database unavailable',
+        "Error deleting entry: Database unavailable",
       );
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Error deleting entry',
+        "Error deleting entry",
         databaseError,
       );
 
