@@ -141,6 +141,32 @@ npm run db:test
 
 A successful connection displays the database name and connection time.
 
+### Development workflow
+
+Use two terminals from the project root.
+
+In terminal 1, start Webpack in watch mode:
+
+```bash
+npm run dev
+```
+
+Wait for the first successful compilation. Webpack generates
+`dist/server.cjs` and rebuilds it when source files change.
+
+In terminal 2, start the development server with Nodemon:
+
+```bash
+npm run dev:server
+```
+
+Nodemon watches the generated bundle and automatically restarts the
+server when it changes.
+
+The API runs at http://localhost:3000.
+
+Stop both processes with Ctrl+C in their respective terminals.
+
 ## Entry structure
 
 ```json
@@ -344,13 +370,25 @@ The API runs at [http://localhost:3000](http://localhost:3000).
 npm run dev
 ```
 
-Starts the development server with Nodemon.
+Builds the server bundle with Webpack and watches for source changes.
+
+```bash
+npm run dev:server
+```
+
+Starts the server with Nodemon and restarts it when the generated bundle changes.
+
+```bash
+npm run build
+```
+
+Builds the backend with Webpack, generating `dist/server.cjs`. Run this before `npm start`.
 
 ```bash
 npm start
 ```
 
-Starts the server with Node.js.
+Starts the built server without watching for changes. Run `npm run build` first.
 
 ```bash
 npm run lint
