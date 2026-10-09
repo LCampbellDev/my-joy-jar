@@ -1,20 +1,27 @@
-/* global process */
-const path = require('node:path');
-const nodeExternals = require('webpack-node-externals');
+/**
+ * Bundles the backend for execution in Node.js.
+ * Builds src/server.js into dist/server.cjs using CommonJS output.
+ * Keeps node_modules dependencies external, so they must remain installed.
+ * Allows source imports to omit the .js extension.
+ *
+ * @file
+ */
+const path = require("node:path");
+const nodeExternals = require("webpack-node-externals");
 
 module.exports = {
-  target: 'node',
+  target: "node",
 
-  entry: './src/server.js',
+  entry: "./src/server.js",
 
   output: {
-    path: path.resolve(process.cwd(), 'dist'),
-    filename: 'server.cjs',
+    path: path.resolve(process.cwd(), "dist"),
+    filename: "server.cjs",
     clean: true,
   },
 
   resolve: {
-    extensions: ['.js'],
+    extensions: [".js"],
   },
 
   module: {
@@ -30,5 +37,5 @@ module.exports = {
 
   externals: [nodeExternals()],
 
-  mode: 'production',
+  mode: "production",
 };

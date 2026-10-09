@@ -16,8 +16,10 @@
     "test": "npm run unit-test && npm run api-test",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
+    "lint": "eslint .",
     "db:test": "node src/scripts/test-db-connection.js",
-    "build": "webpack"
+    "build": "webpack",
+    "docs": "jsdoc -c jsdoc.config.json"
   },
   "repository": {
     "type": "git",
@@ -43,6 +45,7 @@
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.12.0",
     "jest": "^30.5.1",
+    "jsdoc": "^4.0.5",
     "nodemon": "^3.1.14",
     "prettier": "^3.9.6",
     "supertest": "^7.2.2",

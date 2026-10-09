@@ -1,6 +1,5 @@
-import { jest } from "@jest/globals";
 import { getAllEntriesController } from "../controllers/get-all-entries-controller";
-import { entryRoutes } from './entries';
+import { entryRoutes } from "./entries";
 
 describe("entryRoutes", () => {
   it("connects GET / to getAllEntriesController", () => {

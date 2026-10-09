@@ -1,0 +1,14 @@
+{
+  "source": {
+    "include": ["src"],
+    "exclude": [
+      "src/controllers/controller-test-helpers.js",
+      "src/controllers/mock-entries.js"
+    ],
+    "excludePattern": "\\.test\\.js$"
+  },
+  "opts": {
+    "destination": "./docs",
+    "recurse": true
+  }
+}

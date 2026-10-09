@@ -1,4 +1,4 @@
-### Get all entries
+### Get all entries — expected 200
 GET http://localhost:3000/api/entries
 
 ### Get a random entry
@@ -31,7 +31,7 @@ Content-Type: application/json
   "content": "I enjoyed feeling the sunshine on my face."
 }
 
-### Test validation: invalid category
+### Test validation: invalid category — expected 400
 POST http://localhost:3000/api/entries
 Content-Type: application/json
 
@@ -48,10 +48,10 @@ Content-Type: application/json
   "category": "gratitude"
 }
 
-### Delete entry with ID 1
+### Delete entry with ID 1 — expected 200 if it exists, otherwise 404
 DELETE http://localhost:3000/api/entries/1
 
-### Test deletion of an unknown entry
+### Test deletion of an unknown entry — expected 404 if ID 999 does not exist
 DELETE http://localhost:3000/api/entries/999
 
 
