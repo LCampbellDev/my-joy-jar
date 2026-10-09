@@ -5,7 +5,8 @@
  *
  * @file
  */
-import dbPool from '../config/database';
+import dbPool from '../config/database.js';
+  console.info('Testing database connection');
 
 try {
   const [result] = await dbPool.execute(
@@ -17,5 +18,6 @@ try {
   console.error('Database connection failed:', error.message);
   process.exitCode = 1;
 } finally {
+  console.info('Closing database connection pool');
   await dbPool.end();
 }
