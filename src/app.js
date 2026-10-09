@@ -1,7 +1,7 @@
-import express from "express";
-import morgan from "morgan";
+import express from 'express';
+import morgan from 'morgan';
 
-import { entryRoutes } from "./routes/entries";
+import { entryRoutes } from './routes/entries';
 
 /**
  * Express application configured with request logging,
@@ -9,9 +9,9 @@ import { entryRoutes } from "./routes/entries";
  */
 const app = express();
 
-app.use(morgan("dev"));
+app.use(morgan('dev'));
 app.use(express.json());
-app.use("/api/entries", entryRoutes());
+app.use('/api/entries', entryRoutes());
 
 /**
  * Central error middleware.
@@ -28,10 +28,10 @@ app.use((error, req, res, next) => {
     return next(error);
   }
 
-  console.error("Request failed", error);
+  console.error('Request failed', error);
 
   return res.status(500).json({
-    message: "Something went wrong. Please try again later.",
+    message: 'Something went wrong. Please try again later.',
   });
 });
 

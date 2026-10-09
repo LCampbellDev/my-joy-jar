@@ -5,7 +5,7 @@
  * @type {ReadonlyArray<string>}
  */
 export const ALLOWED_CATEGORIES = Object.freeze([
-  "gratitude",
-  "compliment",
-  "joyful-moment",
+  'gratitude',
+  'compliment',
+  'joyful-moment',
 ]);

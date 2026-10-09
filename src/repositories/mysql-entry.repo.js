@@ -14,7 +14,7 @@
  * @property {Date} createdAt - The creation timestamp.
  */
 
-import database from "../config/database";
+import database from '../config/database';
 
 /**
  * Helper function - Retrieves an entry by ID for create and delete operations.
@@ -114,7 +114,7 @@ export const entryRepo = {
       return null;
     }
 
-    await database.execute("DELETE FROM entries WHERE id = ?", [id]);
+    await database.execute('DELETE FROM entries WHERE id = ?', [id]);
 
     return entry;
   },

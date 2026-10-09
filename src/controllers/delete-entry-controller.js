@@ -1,5 +1,5 @@
-import { entryRepo } from "../repositories/mysql-entry.repo";
-import { isValidId } from "../validation/is-valid-id";
+import { entryRepo } from '../repositories/mysql-entry.repo';
+import { isValidId } from '../validation/is-valid-id';
 
 /**
  * Handles DELETE /api/entries/:id.
@@ -17,29 +17,29 @@ export const deleteEntryController = async (req, res) => {
 
   if (!isValidId(id)) {
     return res.status(400).json({
-      message: "Entry ID must be a positive integer.",
+      message: 'Entry ID must be a positive integer.',
     });
   }
 
   const entryId = Number(id);
 
   try {
-    console.info("Deleting entry");
+    console.info('Deleting entry');
 
     const entry = await entryRepo.delete(entryId);
 
     if (!entry) {
       return res.status(404).json({
-        message: "Entry not found.",
+        message: 'Entry not found.',
       });
     }
 
     return res.status(200).json({
-      message: "Entry deleted successfully.",
+      message: 'Entry deleted successfully.',
       entry,
     });
   } catch (error) {
-    console.error("Error deleting entry", error);
+    console.error('Error deleting entry', error);
 
     throw new Error(`Error deleting entry: ${error.message}`, {
       cause: error,
