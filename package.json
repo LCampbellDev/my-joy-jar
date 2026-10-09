@@ -1,6 +1,8 @@
 {
   "name": "my-joy-jar",
   "version": "1.0.0",
+  "description": "A REST API for saving and rediscovering gratitude, compliments and joyful moments.",
+  "author": "Larna Campbell"
   "private": true,
   "engines": {
     "node": ">=24"
