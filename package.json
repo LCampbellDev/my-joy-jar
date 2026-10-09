@@ -17,6 +17,7 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "db:test": "node src/scripts/test-db-connection.js",
     "build": "webpack",
     "docs": "jsdoc -c jsdoc.config.json"
