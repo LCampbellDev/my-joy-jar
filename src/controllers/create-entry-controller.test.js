@@ -37,28 +37,6 @@ describe('createEntryController', () => {
     });
   });
 
-  it('returns status 400 when the input is invalid', async () => {
-    // Arrange
-    const req = {
-      body: {
-        content: 'A valid piece of content.',
-      },
-    };
-
-    const res = createMockResponse();
-
-    // Act
-    await createEntryController(req, res);
-
-    // Assert
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(entryRepo.create).not.toHaveBeenCalled();
-    expect(res.json).toHaveBeenCalledWith({
-      message: 'Validation errors.',
-      errors: ['Category is required.'],
-    });
-  });
-
   it('creates an entry and returns status 201', async () => {
     // Arrange
     entryRepo.create.mockResolvedValue(mockEntry);
@@ -88,25 +66,52 @@ describe('createEntryController', () => {
     });
   });
 
-  it('throws a contextual error when creating an entry fails', async () => {
+  it('returns status 400 when the input is invalid', async () => {
     // Arrange
-    entryRepo.create.mockRejectedValue(new Error('Database unavailable'));
-
     const req = {
       body: {
-        category: mockEntry.category,
-        content: mockEntry.content,
+        content: 'A valid piece of content.',
       },
     };
 
     const res = createMockResponse();
 
-    // Act and Assert
-    await expect(createEntryController(req, res)).rejects.toThrow(
-      'Error creating entry: Database unavailable',
-    );
+    // Act
+    await createEntryController(req, res);
 
-    expect(res.status).not.toHaveBeenCalled();
-    expect(res.json).not.toHaveBeenCalled();
+    // Assert
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(entryRepo.create).not.toHaveBeenCalled();
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Validation errors.',
+      errors: ['Category is required.'],
+    });
+  });
+  
+  it('throws a contextual error when creating an entry fails', async () => {
+  // Arrange
+  const databaseError = new Error('Database unavailable');
+  entryRepo.create.mockRejectedValue(databaseError);
+
+  const req = {
+    body: {
+      category: mockEntry.category,
+      content: mockEntry.content,
+    },
+  };
+
+  const res = createMockResponse();
+
+  // Act
+  const result = createEntryController(req, res);
+
+  // Assert
+  await expect(result).rejects.toThrow(
+    'Error creating entry: Database unavailable',
+  );
+  await expect(result).rejects.toHaveProperty('cause', databaseError);
+
+  expect(res.status).not.toHaveBeenCalled();
+  expect(res.json).not.toHaveBeenCalled();
   });
 });

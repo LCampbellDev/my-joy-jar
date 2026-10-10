@@ -8,11 +8,6 @@ import {
 
 const entryRepo = createMockEntryRepo();
 
-// repo mock required for ESM
-jest.unstable_mockModule('../repositories/mysql-entry.repo', () => ({
-  entryRepo,
-}));
-
 // Repo mock required for ESM
 jest.unstable_mockModule('../repositories/mysql-entry.repo', () => ({
   entryRepo,
@@ -93,38 +88,29 @@ describe('deleteEntryController', () => {
     });
   });
 
-  it('logs and throws when deleting an entry fails', async () => {
-    // Arrange
-    const databaseError = new Error('Database unavailable');
-    entryRepo.delete.mockRejectedValue(databaseError);
+  it('throws a contextual error when deleting an entry fails', async () => {
+  // Arrange
+  const databaseError = new Error('Database unavailable');
+  entryRepo.delete.mockRejectedValue(databaseError);
 
-    const consoleErrorSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
+  const req = {
+    params: {
+      id: String(mockEntry.id),
+    },
+  };
 
-    const req = {
-      params: {
-        id: String(mockEntry.id),
-      },
-    };
+  const res = createMockResponse();
 
-    const res = createMockResponse();
+  // Act
+  const result = deleteEntryController(req, res);
 
-    try {
-      // Act and Assert
-      await expect(deleteEntryController(req, res)).rejects.toThrow(
-        'Error deleting entry: Database unavailable',
-      );
+  // Assert
+  await expect(result).rejects.toThrow(
+    'Error deleting entry: Database unavailable',
+  );
+  await expect(result).rejects.toHaveProperty('cause', databaseError);
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Error deleting entry',
-        databaseError,
-      );
-
-      expect(res.status).not.toHaveBeenCalled();
-      expect(res.json).not.toHaveBeenCalled();
-    } finally {
-      consoleErrorSpy.mockRestore();
-    }
-  });
+  expect(res.status).not.toHaveBeenCalled();
+  expect(res.json).not.toHaveBeenCalled();
+});
 });

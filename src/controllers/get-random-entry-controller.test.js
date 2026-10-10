@@ -69,5 +69,9 @@ describe('getRandomEntryController', () => {
     await expect(result).rejects.toThrow(
       'Error fetching a random entry: Database unavailable',
     );
+    await expect(result).rejects.toHaveProperty('cause', databaseError);
+
+    expect(res.status).not.toHaveBeenCalled();
+    expect(res.json).not.toHaveBeenCalled();
   });
 });
