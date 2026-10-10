@@ -1,4 +1,4 @@
-import { ALLOWED_CATEGORIES } from '../constants/entry-categories';
+import { ALLOWED_ENTRY_CATEGORIES } from '../constants/entry-categories';
 
 /**
  * Checks whether a value is undefined, null or an empty string.
@@ -28,9 +28,9 @@ export const validateEntryInput = ({ category, content } = {}) => {
     validationErrors.push('Category is required.');
   } else if (typeof category !== 'string') {
     validationErrors.push('Category must be a string.');
-  } else if (!ALLOWED_CATEGORIES.includes(category)) {
+  } else if (!ALLOWED_ENTRY_CATEGORIES.includes(category)) {
     validationErrors.push(
-      `Category must be one of: ${ALLOWED_CATEGORIES.join(', ')}.`,
+      `Category must be one of: ${ALLOWED_ENTRY_CATEGORIES.join(', ')}.`,
     );
   }
 
