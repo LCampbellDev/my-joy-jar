@@ -13,7 +13,7 @@ const { default: app } = await import('../app');
 
 describe('GET /api/entries', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('returns all entries with status 200', async () => {

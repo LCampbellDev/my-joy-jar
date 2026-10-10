@@ -13,7 +13,7 @@ const { default: app } = await import('../app');
 
 describe('GET /api/entries/random', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('returns a random entry with status 200', async () => {
@@ -37,6 +37,9 @@ describe('GET /api/entries/random', () => {
 
     // Assert
     expect(response.status).toEqual(404);
+    expect(response.body).toEqual({
+      message: 'No entries are available.',
+    });
   });
 
   it('returns status 500 when retrieving a random entry fails', async () => {
