@@ -6,7 +6,7 @@
  * @file
  */
 import dbPool from '../config/database.js';
-  console.info('Testing database connection');
+console.info('Testing database connection');
 
 try {
   const [result] = await dbPool.execute(

@@ -6,22 +6,22 @@
  *
  * @file
  */
-const path = require("node:path");
-const nodeExternals = require("webpack-node-externals");
+const path = require('node:path');
+const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
-  target: "node",
+  target: 'node',
 
-  entry: "./src/server.js",
+  entry: './src/server.js',
 
   output: {
-    path: path.resolve(process.cwd(), "dist"),
-    filename: "server.cjs",
+    path: path.resolve(process.cwd(), 'dist'),
+    filename: 'server.cjs',
     clean: true,
   },
 
   resolve: {
-    extensions: [".js"],
+    extensions: ['.js'],
   },
 
   module: {
@@ -37,5 +37,5 @@ module.exports = {
 
   externals: [nodeExternals()],
 
-  mode: "production",
+  mode: 'production',
 };
