@@ -1,10 +1,10 @@
 import { getAllEntriesController } from '../controllers/get-all-entries-controller';
-import { entryRoutes } from './entries';
+import { createEntryRouter } from './entries';
 
-describe('entryRoutes', () => {
+describe('createEntryRouter', () => {
   it('connects GET / to getAllEntriesController', () => {
     // Arrange
-    const router = entryRoutes();
+    const router = createEntryRouter();
 
     // Act
     const getAllEntriesRoute = router.stack.find(

@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 
-import { entryRoutes } from './routes/entries';
+import { createEntryRouter } from './routes/entries';
 
 /**
  * Express application configured with request logging,
@@ -11,7 +11,7 @@ const app = express();
 
 app.use(morgan('dev'));
 app.use(express.json());
-app.use('/api/entries', entryRoutes());
+app.use('/api/entries', createEntryRouter());
 
 /**
  * Central error middleware.

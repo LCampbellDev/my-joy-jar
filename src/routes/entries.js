@@ -10,7 +10,7 @@ import { getRandomEntryController } from '../controllers/get-random-entry-contro
  *
  * @returns {Function} The configured Express router.
  */
-export const entryRoutes = () => {
+export const createEntryRouter = () => {
   const router = Router();
 
   router.get('/', getAllEntriesController);
