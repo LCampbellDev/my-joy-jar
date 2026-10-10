@@ -76,6 +76,8 @@ my-joy-jar/
 │   └── server.js
 ├── .env.example
 ├── .gitignore
+├── .prettierignore
+├── .prettierrc.json
 ├── api-requests.http
 ├── eslint.config.js
 ├── package.json
