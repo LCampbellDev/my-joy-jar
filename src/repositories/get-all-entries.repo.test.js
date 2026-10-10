@@ -46,7 +46,10 @@ describe('entryRepo.getAll', () => {
     const databaseError = new Error('Database unavailable');
     database.execute.mockRejectedValue(databaseError);
 
-    // Act and Assert
-    await expect(entryRepo.getAll()).rejects.toBe(databaseError);
+    // Act
+    const result = entryRepo.getAll();
+
+    // Assert
+    await expect(result).rejects.toBe(databaseError);
   });
 });

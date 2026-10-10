@@ -46,7 +46,10 @@ describe('entryRepo.getRandom', () => {
     const databaseError = new Error('Database unavailable');
     database.execute.mockRejectedValue(databaseError);
 
-    // Act and Assert
-    await expect(entryRepo.getRandom()).rejects.toBe(databaseError);
+    // Act
+    const result = entryRepo.getRandom();
+
+    // Assert
+    await expect(result).rejects.toBe(databaseError);
   });
 });

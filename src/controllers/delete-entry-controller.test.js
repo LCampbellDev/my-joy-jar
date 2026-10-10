@@ -89,28 +89,28 @@ describe('deleteEntryController', () => {
   });
 
   it('throws a contextual error when deleting an entry fails', async () => {
-  // Arrange
-  const databaseError = new Error('Database unavailable');
-  entryRepo.delete.mockRejectedValue(databaseError);
+    // Arrange
+    const databaseError = new Error('Database unavailable');
+    entryRepo.delete.mockRejectedValue(databaseError);
 
-  const req = {
-    params: {
-      id: String(mockEntry.id),
-    },
-  };
+    const req = {
+      params: {
+        id: String(mockEntry.id),
+      },
+    };
 
-  const res = createMockResponse();
+    const res = createMockResponse();
 
-  // Act
-  const result = deleteEntryController(req, res);
+    // Act
+    const result = deleteEntryController(req, res);
 
-  // Assert
-  await expect(result).rejects.toThrow(
-    'Error deleting entry: Database unavailable',
-  );
-  await expect(result).rejects.toHaveProperty('cause', databaseError);
+    // Assert
+    await expect(result).rejects.toThrow(
+      'Error deleting entry: Database unavailable',
+    );
+    await expect(result).rejects.toHaveProperty('cause', databaseError);
 
-  expect(res.status).not.toHaveBeenCalled();
-  expect(res.json).not.toHaveBeenCalled();
-});
+    expect(res.status).not.toHaveBeenCalled();
+    expect(res.json).not.toHaveBeenCalled();
+  });
 });

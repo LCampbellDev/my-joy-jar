@@ -87,31 +87,31 @@ describe('createEntryController', () => {
       errors: ['Category is required.'],
     });
   });
-  
+
   it('throws a contextual error when creating an entry fails', async () => {
-  // Arrange
-  const databaseError = new Error('Database unavailable');
-  entryRepo.create.mockRejectedValue(databaseError);
+    // Arrange
+    const databaseError = new Error('Database unavailable');
+    entryRepo.create.mockRejectedValue(databaseError);
 
-  const req = {
-    body: {
-      category: mockEntry.category,
-      content: mockEntry.content,
-    },
-  };
+    const req = {
+      body: {
+        category: mockEntry.category,
+        content: mockEntry.content,
+      },
+    };
 
-  const res = createMockResponse();
+    const res = createMockResponse();
 
-  // Act
-  const result = createEntryController(req, res);
+    // Act
+    const result = createEntryController(req, res);
 
-  // Assert
-  await expect(result).rejects.toThrow(
-    'Error creating entry: Database unavailable',
-  );
-  await expect(result).rejects.toHaveProperty('cause', databaseError);
+    // Assert
+    await expect(result).rejects.toThrow(
+      'Error creating entry: Database unavailable',
+    );
+    await expect(result).rejects.toHaveProperty('cause', databaseError);
 
-  expect(res.status).not.toHaveBeenCalled();
-  expect(res.json).not.toHaveBeenCalled();
+    expect(res.status).not.toHaveBeenCalled();
+    expect(res.json).not.toHaveBeenCalled();
   });
 });

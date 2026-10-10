@@ -51,7 +51,7 @@ describe('getAllEntriesController', () => {
     expect(res.json).toHaveBeenCalledWith([]);
   });
 
-   it('throws a contextual error when retrieving entries fails', async () => {
+  it('throws a contextual error when retrieving entries fails', async () => {
     // Arrange
     const databaseError = new Error('Database unavailable');
 
@@ -71,6 +71,5 @@ describe('getAllEntriesController', () => {
 
     expect(res.status).not.toHaveBeenCalled();
     expect(res.json).not.toHaveBeenCalled();
-    
   });
 });

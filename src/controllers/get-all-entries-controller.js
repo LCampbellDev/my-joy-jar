@@ -20,7 +20,6 @@ export const getAllEntriesController = async (req, res) => {
   } catch (error) {
     console.error('Error fetching all entries', error);
 
-
     throw new Error(`Error fetching all entries: ${error.message}`, {
       cause: error,
     });
