@@ -1,6 +1,8 @@
 {
   "name": "my-joy-jar",
   "version": "1.0.0",
+  "description": "A REST API for saving and rediscovering gratitude, compliments and joyful moments.",
+  "author": "Larna Campbell",
   "private": true,
   "engines": {
     "node": ">=24"
@@ -11,12 +13,14 @@
   "scripts": {
     "start": "node dist/server.cjs",
     "dev": "webpack --watch",
+    "dev:server": "nodemon --watch dist --ext cjs --exec node dist/server.cjs",
     "unit-test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathIgnorePatterns=\\.api\\.test\\.js$",
     "api-test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testMatch=**/*.api.test.js",
     "test": "npm run unit-test && npm run api-test",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "db:test": "node src/scripts/test-db-connection.js",
     "build": "webpack",
     "docs": "jsdoc -c jsdoc.config.json"

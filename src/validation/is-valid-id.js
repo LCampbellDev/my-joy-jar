@@ -6,7 +6,7 @@
  * @returns {boolean} True if the value matches the required ID format.
  */
 export const isValidId = (id) => {
-  if (typeof id !== "string") {
+  if (typeof id !== 'string') {
     return false;
   }
 

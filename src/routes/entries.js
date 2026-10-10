@@ -1,8 +1,8 @@
-import { Router } from "express";
-import { createEntryController } from "../controllers/create-entry-controller";
-import { deleteEntryController } from "../controllers/delete-entry-controller";
-import { getAllEntriesController } from "../controllers/get-all-entries-controller";
-import { getRandomEntryController } from "../controllers/get-random-entry-controller";
+import { Router } from 'express';
+import { createEntryController } from '../controllers/create-entry-controller';
+import { deleteEntryController } from '../controllers/delete-entry-controller';
+import { getAllEntriesController } from '../controllers/get-all-entries-controller';
+import { getRandomEntryController } from '../controllers/get-random-entry-controller';
 
 /**
  * Creates a router for retrieving, creating and deleting joy jar entries.
@@ -13,10 +13,10 @@ import { getRandomEntryController } from "../controllers/get-random-entry-contro
 export const entryRoutes = () => {
   const router = Router();
 
-  router.get("/", getAllEntriesController);
-  router.get("/random", getRandomEntryController);
-  router.post("/", createEntryController);
-  router.delete("/:id", deleteEntryController);
+  router.get('/', getAllEntriesController);
+  router.get('/random', getRandomEntryController);
+  router.post('/', createEntryController);
+  router.delete('/:id', deleteEntryController);
 
   return router;
 };

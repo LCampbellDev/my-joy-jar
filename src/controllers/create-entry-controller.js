@@ -1,5 +1,5 @@
-import { entryRepo } from "../repositories/mysql-entry.repo";
-import { validateEntryInput } from "../validation/validate-entry-input";
+import { entryRepo } from '../repositories/mysql-entry.repo';
+import { validateEntryInput } from '../validation/validate-entry-input';
 
 /**
  * Handles POST /api/entries.
@@ -21,13 +21,13 @@ export const createEntryController = async (req, res) => {
 
   if (validationErrors.length) {
     return res.status(400).json({
-      message: "Validation errors.",
+      message: 'Validation errors.',
       errors: validationErrors,
     });
   }
 
   try {
-    console.info("Creating entry");
+    console.info('Creating entry');
 
     const entry = await entryRepo.create({
       category,
@@ -35,11 +35,11 @@ export const createEntryController = async (req, res) => {
     });
 
     return res.status(201).json({
-      message: "Entry created successfully.",
+      message: 'Entry created successfully.',
       entry,
     });
   } catch (error) {
-    console.error("Error creating entry", error);
+    console.error('Error creating entry', error);
 
     throw new Error(`Error creating entry: ${error.message}`, {
       cause: error,

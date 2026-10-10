@@ -1,19 +1,19 @@
-import js from "@eslint/js";
-import globals from "globals";
-import eslintConfigPrettier from "eslint-config-prettier";
+import js from '@eslint/js';
+import globals from 'globals';
+import eslintConfigPrettier from 'eslint-config-prettier';
 
 export default [
   {
-    ignores: ["node_modules/**", "coverage/**", "dist/**", "docs/**"],
+    ignores: ['node_modules/**', 'coverage/**', 'dist/**', 'docs/**'],
   },
 
   js.configs.recommended,
 
   {
-    files: ["**/*.js", "**/*.cjs"],
+    files: ['**/*.js', '**/*.cjs'],
     languageOptions: {
-      ecmaVersion: "latest",
-      sourceType: "module",
+      ecmaVersion: 'latest',
+      sourceType: 'module',
       globals: {
         ...globals.node,
       },
@@ -21,14 +21,14 @@ export default [
   },
 
   {
-    files: ["**/*.cjs"],
+    files: ['**/*.cjs'],
     languageOptions: {
-      sourceType: "commonjs",
+      sourceType: 'commonjs',
     },
   },
 
   {
-    files: ["tests/**/*.js", "**/*.test.js"],
+    files: ['tests/**/*.js', '**/*.test.js'],
     languageOptions: {
       globals: {
         ...globals.node,

@@ -1,22 +1,22 @@
-import { jest } from "@jest/globals";
-import { mockEntries } from "../controllers/mock-entries";
+import { jest } from '@jest/globals';
+import { mockEntries } from '../controllers/mock-entries';
 
 const database = {
   execute: jest.fn(),
 };
 
-jest.unstable_mockModule("../config/database", () => ({
+jest.unstable_mockModule('../config/database', () => ({
   default: database,
 }));
 
-const { entryRepo } = await import("./mysql-entry.repo");
+const { entryRepo } = await import('./mysql-entry.repo');
 
-describe("entryRepo.delete", () => {
+describe('entryRepo.delete', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
 
-  it("retrieves and deletes an existing entry", async () => {
+  it('retrieves and deletes an existing entry', async () => {
     // Arrange
     const mockEntry = mockEntries[0];
 
@@ -38,12 +38,12 @@ describe("entryRepo.delete", () => {
 
     expect(database.execute).toHaveBeenNthCalledWith(
       2,
-      "DELETE FROM entries WHERE id = ?",
+      'DELETE FROM entries WHERE id = ?',
       [mockEntry.id],
     );
   });
 
-  it("returns null without deleting when the entry does not exist", async () => {
+  it('returns null without deleting when the entry does not exist', async () => {
     // Arrange
     database.execute.mockResolvedValueOnce([[]]);
 
@@ -53,14 +53,14 @@ describe("entryRepo.delete", () => {
     // Assert
     expect(entry).toBeNull();
     expect(database.execute).not.toHaveBeenCalledWith(
-      "DELETE FROM entries WHERE id = ?",
+      'DELETE FROM entries WHERE id = ?',
       expect.any(Array),
     );
   });
 
-  it("propagates errors when retrieving the entry fails", async () => {
+  it('propagates errors when retrieving the entry fails', async () => {
     // Arrange
-    const databaseError = new Error("Retrieval failed");
+    const databaseError = new Error('Retrieval failed');
     database.execute.mockRejectedValueOnce(databaseError);
 
     // Act and Assert
@@ -69,15 +69,15 @@ describe("entryRepo.delete", () => {
     );
 
     expect(database.execute).not.toHaveBeenCalledWith(
-      "DELETE FROM entries WHERE id = ?",
+      'DELETE FROM entries WHERE id = ?',
       expect.any(Array),
     );
   });
 
-  it("propagates errors when deleting the entry fails", async () => {
+  it('propagates errors when deleting the entry fails', async () => {
     // Arrange
     const mockEntry = mockEntries[0];
-    const databaseError = new Error("Delete failed");
+    const databaseError = new Error('Delete failed');
 
     database.execute
       .mockResolvedValueOnce([[mockEntry]])
