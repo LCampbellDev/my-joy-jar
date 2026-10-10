@@ -1,10 +1,10 @@
 import { jest } from '@jest/globals';
-import { mockEntry } from './mock-entries';
+import { mockEntry } from '../../tests/mock-entries';
 
 import {
   createMockEntryRepo,
   createMockResponse,
-} from './controller-test-helpers';
+} from '../../tests/test-helpers';
 
 const entryRepo = createMockEntryRepo();
 
@@ -18,7 +18,7 @@ const { getRandomEntryController } =
 
 describe('getRandomEntryController', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('returns a random entry with status 200', async () => {

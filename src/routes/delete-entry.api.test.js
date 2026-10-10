@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import { mockEntries } from '../controllers/mock-entries';
-import { createMockEntryRepo } from '../controllers/controller-test-helpers';
+import { mockEntry, mockEntries } from '../../tests/mock-entries';
+import { createMockEntryRepo } from '../../tests/test-helpers';
 
 const entryRepo = createMockEntryRepo();
 
@@ -18,7 +18,6 @@ describe('DELETE /api/entries/:id', () => {
 
   it('deletes an entry and returns status 200', async () => {
     // Arrange
-    const mockEntry = mockEntries[0];
     entryRepo.delete.mockResolvedValue(mockEntry);
 
     // Act

@@ -1,10 +1,10 @@
 import { jest } from '@jest/globals';
-import { mockEntries } from './mock-entries';
+import { mockEntry } from '../../tests/mock-entries';
 
 import {
   createMockEntryRepo,
   createMockResponse,
-} from './controller-test-helpers';
+} from '../../tests/test-helpers';
 
 const entryRepo = createMockEntryRepo();
 
@@ -12,8 +12,6 @@ const entryRepo = createMockEntryRepo();
 jest.unstable_mockModule('../repositories/mysql-entry.repo', () => ({
   entryRepo,
 }));
-
-const mockEntry = mockEntries[0];
 
 // Repo mock required for ESM
 jest.unstable_mockModule('../repositories/mysql-entry.repo', () => ({
@@ -24,7 +22,7 @@ const { deleteEntryController } = await import('./delete-entry-controller');
 
 describe('deleteEntryController', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('deletes an entry and returns status 200', async () => {

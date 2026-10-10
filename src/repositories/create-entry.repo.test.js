@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { mockEntries } from '../controllers/mock-entries';
+import { mockEntry, mockEntries } from '../../tests/mock-entries';
 
 const database = {
   execute: jest.fn(),
@@ -18,7 +18,6 @@ describe('entryRepo.create', () => {
 
   it('inserts an entry and retrieves it using the new ID', async () => {
     // Arrange
-    const mockEntry = mockEntries[0];
     const input = {
       category: mockEntry.category,
       content: mockEntry.content,
@@ -53,8 +52,8 @@ describe('entryRepo.create', () => {
     database.execute.mockRejectedValueOnce(databaseError);
 
     const input = {
-      category: mockEntries[0].category,
-      content: mockEntries[0].content,
+      category: mockEntry.category,
+      content: mockEntry.content,
     };
 
     // Act and Assert

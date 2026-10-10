@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { mockEntries } from '../controllers/mock-entries';
+import { mockEntries } from '../../tests/mock-entries';
 
 const database = {
   execute: jest.fn(),

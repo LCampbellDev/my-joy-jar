@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { mockEntries } from '../controllers/mock-entries';
+import { mockEntry, mockEntries } from '../../tests/mock-entries';
 
 const database = {
   execute: jest.fn(),
@@ -18,8 +18,6 @@ describe('entryRepo.delete', () => {
 
   it('retrieves and deletes an existing entry', async () => {
     // Arrange
-    const mockEntry = mockEntries[0];
-
     database.execute
       .mockResolvedValueOnce([[mockEntry]])
       .mockResolvedValueOnce([{ affectedRows: 1 }]);

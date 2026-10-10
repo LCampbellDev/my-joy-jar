@@ -1,10 +1,10 @@
 import { jest } from '@jest/globals';
-import { mockEntries } from './mock-entries';
+import { mockEntries } from '../../tests/mock-entries';
 
 import {
   createMockEntryRepo,
   createMockResponse,
-} from './controller-test-helpers';
+} from '../../tests/test-helpers';
 
 const entryRepo = createMockEntryRepo();
 
@@ -18,7 +18,7 @@ const { getAllEntriesController } =
 
 describe('getAllEntriesController', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('throws a contextual error when retrieving entries fails', async () => {

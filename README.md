@@ -74,6 +74,9 @@ my-joy-jar/
 │   │   └── validate-entry-input.test.js
 │   ├── app.js
 │   └── server.js
+├── tests/
+│   ├── mock-entries.js
+│   └── test-helpers.js
 ├── .env.example
 ├── .gitignore
 ├── .prettierignore

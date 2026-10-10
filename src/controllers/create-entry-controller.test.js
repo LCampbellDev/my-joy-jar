@@ -1,10 +1,10 @@
 import { jest } from '@jest/globals';
-import { mockEntry } from './mock-entries';
+import { mockEntry } from '../../tests/mock-entries';
 
 import {
   createMockEntryRepo,
   createMockResponse,
-} from './controller-test-helpers';
+} from '../../tests/test-helpers';
 
 const entryRepo = createMockEntryRepo();
 
@@ -17,7 +17,7 @@ const { createEntryController } = await import('./create-entry-controller');
 
 describe('createEntryController', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('returns status 400 when the request body is missing', async () => {
@@ -52,6 +52,7 @@ describe('createEntryController', () => {
 
     // Assert
     expect(res.status).toHaveBeenCalledWith(400);
+    expect(entryRepo.create).not.toHaveBeenCalled();
     expect(res.json).toHaveBeenCalledWith({
       message: 'Validation errors.',
       errors: ['Category is required.'],
