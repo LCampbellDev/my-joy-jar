@@ -13,5 +13,4 @@ app.use(express.json());
 app.use('/api/entries', createEntryRouter());
 app.use(errorHandler);
 
-
 export default app;
