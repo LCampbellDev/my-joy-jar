@@ -1,0 +1,171 @@
+````markdown
+# Testing guide
+
+This guide explains how MyJoyJar tests are organised, how to run them,
+and the conventions used when writing new tests.
+
+## Running tests
+
+- `npm test`: run all unit and API tests.
+- `npm run unit-test`: run unit tests only.
+- `npm run api-test`: run API tests only.
+
+## Test layers
+
+- Validation tests check accepted inputs and validation errors.
+- Repository tests check database operations using a mocked database.
+- Controller tests check validation, repository calls and responses.
+- Route tests check that endpoints use the intended controllers.
+- API tests use Supertest to check HTTP behaviour through the Express app,
+  with the repository mocked.
+
+The API tests do not verify a real MySQL connection or database behaviour.
+
+## Test names and ordering
+
+Use descriptive test names that explain the expected behaviour.
+
+Within each suite, put tests in this order:
+
+1. Successful behaviour.
+2. Alternative outcomes, invalid inputs and edge cases.
+3. Unexpected failures, where relevant.
+
+Pure validation functions do not need a database-failure test.
+
+## Arrange, Act and Assert
+
+Separate each test into three sections:
+
+- Arrange: prepare inputs and configure mocks.
+- Act: call the function or make the HTTP request.
+- Assert: check the result and relevant interactions.
+
+```js
+it('returns an error when content is missing', () => {
+  // Arrange
+  const input = {
+    category: 'gratitude',
+  };
+
+  // Act
+  const validationErrors = validateEntryInput(input);
+
+  // Assert
+  expect(validationErrors).toEqual(['Content is required.']);
+});
+```
+````
+
+Omit Arrange when the test needs no preparation, such as calling a
+validator without an argument.
+
+## Shared fixtures and helpers
+
+Shared test support lives in the root `tests/` directory:
+
+- `mock-entries.js`: stored entries, including IDs and creation dates.
+- `mock-entry-inputs.js`: valid and invalid entry input objects.
+- `test-helpers.js`: factories for mocked repositories and Express responses.
+
+Reuse fixtures when their values fit the scenario. Keep expected HTTP
+status numbers and response messages literal in assertions so tests
+independently check the application’s behaviour.
+
+Avoid modifying shared fixtures. When a test needs to change an input,
+create a copy first:
+
+```js
+const input = {
+  ...validEntryInput,
+  content: '',
+};
+```
+
+Object spread creates a shallow copy. Nested objects would still be shared.
+
+## Mock setup
+
+Suites that use shared Jest mocks reset them before each test:
+
+```js
+beforeEach(() => {
+  jest.resetAllMocks();
+});
+```
+
+This clears recorded calls and removes mock implementations. Each test
+then configures the behaviour it needs.
+
+Create fresh response mocks inside each controller test.
+
+Validation tests do not need mock resets because they use no mocks.
+
+## Error assertions
+
+Repository tests check that database failures pass through as the
+original error object:
+
+```js
+// Act
+const result = entryRepo.getAll();
+
+// Assert
+await expect(result).rejects.toBe(databaseError);
+```
+
+Controller tests check the contextual message and preserved cause:
+
+```js
+// Act
+const result = getAllEntriesController(req, res);
+
+// Assert
+await expect(result).rejects.toThrow(
+  'Error fetching all entries: Database unavailable',
+);
+await expect(result).rejects.toHaveProperty('cause', databaseError);
+
+expect(res.status).not.toHaveBeenCalled();
+expect(res.json).not.toHaveBeenCalled();
+```
+
+Call the function once and save its promise. Do not await it in the Act
+section of a rejection test; await the rejection assertions instead.
+
+API tests check that unexpected failures produce a generic 500 response
+without exposing database details.
+
+## Logging during tests
+
+Tests deliberately exercising failures may print error logs while passing.
+
+Morgan logs HTTP request summaries. The central error handler logs
+request failures. Controllers preserve error context without logging
+the same failure again.
+
+These tests currently allow console output rather than mocking or
+asserting logging calls.
+
+## Before committing
+
+Run:
+
+```bash
+npm run format:check
+npm run lint
+npm test
+```
+
+After application or build changes, also run:
+
+```bash
+npm run build
+```
+
+After documentation changes, regenerate the HTML and inspect the affected
+pages:
+
+```bash
+npm run docs
+```

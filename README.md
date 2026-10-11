@@ -43,10 +43,9 @@ my-joy-jar/
 │   │   ├── entry-categories.js
 │   │   ├── http-status.js
 │   │   ├── response-messages.js
-│   │   └── error-context.js
+│   │   ├── error-context.js
+│   │   └── validation-messages.js
 │   ├── controllers/
-│   │   ├── controller-test-helpers.js
-│   │   ├── mock-entries.js
 │   │   ├── create-entry-controller.js
 │   │   ├── create-entry-controller.test.js
 │   │   ├── delete-entry-controller.js
@@ -55,6 +54,9 @@ my-joy-jar/
 │   │   ├── get-all-entries-controller.test.js
 │   │   ├── get-random-entry-controller.js
 │   │   └── get-random-entry-controller.test.js
+│   ├── middleware/
+│   │   ├── error-handler.js
+│   │   └── error-handler.test.js
 │   ├── repositories/
 │   │   ├── mysql-entry.repo.js
 │   │   ├── create-entry.repo.test.js
@@ -79,17 +81,26 @@ my-joy-jar/
 │   └── server.js
 ├── tests/
 │   ├── mock-entries.js
+│   ├── mock-entry-inputs.js
 │   └── test-helpers.js
+├── docs/
+├── documentation/
+│   ├── testing.md
+│   └── testing.json
 ├── .env.example
 ├── .gitignore
 ├── .prettierignore
 ├── .prettierrc.json
 ├── api-requests.http
 ├── eslint.config.js
+├── jsdoc.config.json
 ├── package.json
 ├── README.md
 └── webpack.config.cjs
 ```
+
+`docs/` contains generated HTML documentation and is excluded from Git.
+`documentation/` contains the Markdown guides used to generate it.
 
 ## Current functionality
 
@@ -324,6 +335,20 @@ DELETE /api/entries/3
 ```
 
 A successful request returns the deleted entry. The API returns `400 Bad Request` if the ID is not a positive integer and `404 Not Found` when no entry has the requested ID.
+
+## Documentation
+
+Generate the HTML documentation:
+
+```bash
+npm run docs
+```
+
+Open docs/index.html in your browser.
+The documentation includes this README as its homepage, a testing guide,
+and a reference generated from JSDoc comments in the source files.
+Documentation guides are maintained in documentation/.
+Generated HTML is written to docs/ and is excluded from Git.
 
 ## Technology
 
