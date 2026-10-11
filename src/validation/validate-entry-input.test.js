@@ -1,14 +1,25 @@
+import {
+  validEntryInput,
+  whitespaceEntryInput,
+  missingCategoryInput,
+  nonStringCategoryInput,
+  unsupportedCategoryInput,
+  missingContentInput,
+  nonStringContentInput,
+  emptyContentInput,
+  whitespaceOnlyContentInput,
+  missingFieldsInput,
+} from '../../tests/mock-entry-inputs';
+
 import { validateEntryInput } from './validate-entry-input';
 
 describe('validateEntryInput', () => {
-  // Valid cases
-
   it('returns no errors when category and content are valid', () => {
     // Arrange
-    const validationErrors = validateEntryInput({
-      category: 'gratitude',
-      content: 'I am grateful for a peaceful morning.',
-    });
+    const input = validEntryInput;
+
+    // Act
+    const validationErrors = validateEntryInput(input);
 
     // Assert
     expect(validationErrors).toEqual([]);
@@ -16,101 +27,100 @@ describe('validateEntryInput', () => {
 
   it('accepts content with surrounding whitespace', () => {
     // Arrange
-    const validationErrors = validateEntryInput({
-      category: 'compliment',
-      content: '  Someone said I explained my project clearly.  ',
-    });
+    const input = whitespaceEntryInput;
+
+    // Act
+    const validationErrors = validateEntryInput(input);
 
     // Assert
     expect(validationErrors).toEqual([]);
   });
 
-  // Invalid category cases
-
   it('returns an error when category is missing', () => {
     // Arrange
-    const validationErrors = validateEntryInput({
-      content: 'I enjoyed learning about Jest.',
-    });
+    const input = missingCategoryInput;
+
+    // Act
+    const validationErrors = validateEntryInput(input);
 
     // Assert
-    expect(validationErrors).toContain('Category is required.');
+    expect(validationErrors).toEqual(['Category is required.']);
   });
 
   it('returns an error when category is not a string', () => {
     // Arrange
-    const validationErrors = validateEntryInput({
-      category: 123,
-      content: 'I enjoyed learning about Jest.',
-    });
+    const input = nonStringCategoryInput;
+
+    // Act
+    const validationErrors = validateEntryInput(input);
 
     // Assert
-    expect(validationErrors).toContain('Category must be a string.');
+    expect(validationErrors).toEqual(['Category must be a string.']);
   });
 
   it('returns an error when category is not supported', () => {
     // Arrange
-    const validationErrors = validateEntryInput({
-      category: 'achievement',
-      content: 'I completed my repository refactor.',
-    });
+    const input = unsupportedCategoryInput;
+
+    // Act
+    const validationErrors = validateEntryInput(input);
 
     // Assert
-    expect(validationErrors).toContain(
+    expect(validationErrors).toEqual([
       'Category must be one of: gratitude, compliment, joyful-moment.',
-    );
+    ]);
   });
-
-  // Invalid content cases
 
   it('returns an error when content is missing', () => {
     // Arrange
-    const validationErrors = validateEntryInput({
-      category: 'gratitude',
-    });
+    const input = missingContentInput;
+
+    // Act
+    const validationErrors = validateEntryInput(input);
 
     // Assert
-    expect(validationErrors).toContain('Content is required.');
+    expect(validationErrors).toEqual(['Content is required.']);
   });
 
   it('returns an error when content is not a string', () => {
     // Arrange
-    const validationErrors = validateEntryInput({
-      category: 'gratitude',
-      content: 123,
-    });
+    const input = nonStringContentInput;
+
+    // Act
+    const validationErrors = validateEntryInput(input);
 
     // Assert
-    expect(validationErrors).toContain('Content must be a string.');
+    expect(validationErrors).toEqual(['Content must be a string.']);
   });
-
-  // Edge cases
 
   it('returns a required error when content is an empty string', () => {
     // Arrange
-    const validationErrors = validateEntryInput({
-      category: 'gratitude',
-      content: '',
-    });
+    const input = emptyContentInput;
+
+    // Act
+    const validationErrors = validateEntryInput(input);
 
     // Assert
-    expect(validationErrors).toContain('Content is required.');
+    expect(validationErrors).toEqual(['Content is required.']);
   });
 
   it('returns an empty-content error when content contains only whitespace', () => {
     // Arrange
-    const validationErrors = validateEntryInput({
-      category: 'gratitude',
-      content: '   ',
-    });
+    const input = whitespaceOnlyContentInput;
+
+    // Act
+    const validationErrors = validateEntryInput(input);
 
     // Assert
-    expect(validationErrors).toContain('Content cannot be empty.');
+    expect(validationErrors).toEqual(['Content cannot be empty.']);
   });
 
   it('returns both required errors when both fields are missing', () => {
     // Arrange
-    const validationErrors = validateEntryInput({});
+    const input = missingFieldsInput;
+
+    // Act
+    const validationErrors = validateEntryInput(input);
 
     // Assert
     expect(validationErrors).toEqual([
@@ -120,7 +130,7 @@ describe('validateEntryInput', () => {
   });
 
   it('returns both required errors when called without an argument', () => {
-    // Arrange
+    // Act
     const validationErrors = validateEntryInput();
 
     // Assert
