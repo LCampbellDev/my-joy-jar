@@ -294,6 +294,20 @@ correct. Database configuration coverage also does not verify a real
 MySQL connection, and mocked repository tests do not execute SQL against
 a real database.
 
+### Coverage thresholds
+
+Controllers, middleware, repositories, routes and validation files must
+each achieve 100% statement, branch, function and line coverage.
+
+`npm run test:coverage` fails if these thresholds are not met.
+The regular `npm test` command does not enforce coverage thresholds.
+
+Startup and database diagnostic files remain included in the report
+without a coverage threshold.
+
+These checks run locally. Enforcing them on pull requests also requires
+CI to run the coverage command and a required check in GitHub.
+
 ## Manual API testing
 
 The `api-requests.http` file contains example HTTP requests for manually testing the API.
