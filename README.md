@@ -31,6 +31,19 @@ The entry router maps each API endpoint to the relevant controller. Controllers 
 
 Controllers log database failures and throw errors with operation-specific context. Central error middleware in `src/app.js` returns a consistent `500 Internal Server Error` JSON response.
 
+### Health check
+
+`GET /health` returns status 200 with:
+
+```json
+{
+  "status": "ok"
+}
+```
+
+This is a liveness check: it confirms the server can respond to HTTP
+requests. It does not check MySQL connectivity or database readiness.
+
 ```text
 my-joy-jar/
 ├── database/
@@ -69,7 +82,9 @@ my-joy-jar/
 │   │   ├── create-entry.api.test.js
 │   │   ├── delete-entry.api.test.js
 │   │   ├── get-all-entries.api.test.js
-│   │   └── get-random-entry.api.test.js
+│   │   ├── get-random-entry.api.test.js
+│   │   ├── health.js
+│   │   └──  health.api.test.js
 │   ├── scripts/
 │   │   └── test-db-connection.js
 │   ├── validation/
@@ -107,12 +122,13 @@ my-joy-jar/
 
 The API currently supports:
 
-| Method   | Route                 | Purpose                  |
-| -------- | --------------------- | ------------------------ |
-| `GET`    | `/api/entries`        | Retrieve all entries     |
-| `POST`   | `/api/entries`        | Create a new entry       |
-| `GET`    | `/api/entries/random` | Retrieve a random entry  |
-| `DELETE` | `/api/entries/:id`    | Delete a specified entry |
+| Method   | Route                 | Purpose                   |
+| -------- | --------------------- | ------------------------- |
+| `GET`    | `/api/entries`        | Retrieve all entries      |
+| `POST`   | `/api/entries`        | Create a new entry        |
+| `GET`    | `/api/entries/random` | Retrieve a random entry   |
+| `DELETE` | `/api/entries/:id`    | Delete a specified entry  |
+| `HEALTH` | `/api/entries/health` | Confirm server responsive |
 
 ## Database setup
 
