@@ -1,7 +1,8 @@
 import express from 'express';
 import morgan from 'morgan';
-
 import { createEntryRouter } from './routes/entries';
+import { HTTP_STATUS } from './constants/http-status';
+import { RESPONSE_MESSAGES } from './constants/response-messages';
 
 /**
  * Express application configured with request logging,
@@ -30,8 +31,8 @@ app.use((error, req, res, next) => {
 
   console.error('Request failed', error);
 
-  return res.status(500).json({
-    message: 'Something went wrong. Please try again later.',
+  return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+    message: RESPONSE_MESSAGES.INTERNAL_ERROR,
   });
 });
 

@@ -1,5 +1,7 @@
 import { entryRepo } from '../repositories/mysql-entry.repo';
 import { validateEntryInput } from '../validation/validate-entry-input';
+import { HTTP_STATUS } from '../constants/http-status';
+import { RESPONSE_MESSAGES } from '../constants/response-messages';
 
 /**
  * Handles POST /api/entries.
@@ -20,8 +22,8 @@ export const createEntryController = async (req, res) => {
   });
 
   if (validationErrors.length) {
-    return res.status(400).json({
-      message: 'Validation errors.',
+    return res.status(HTTP_STATUS.BAD_REQUEST).json({
+      message: RESPONSE_MESSAGES.VALIDATION_ERROR,
       errors: validationErrors,
     });
   }
@@ -34,8 +36,8 @@ export const createEntryController = async (req, res) => {
       content: content.trim(),
     });
 
-    return res.status(201).json({
-      message: 'Entry created successfully.',
+    return res.status(HTTP_STATUS.CREATED).json({
+      message: RESPONSE_MESSAGES.ENTRY_CREATED,
       entry,
     });
   } catch (error) {

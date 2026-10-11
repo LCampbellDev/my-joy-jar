@@ -40,7 +40,10 @@ my-joy-jar/
 │   ├── config/
 │   │   └── database.js
 │   ├── constants/
-│   │   └── entry-categories.js
+│   │   ├── entry-categories.js
+│   │   ├── http-status.js
+│   │   ├── response-messages.js
+│   │   └── error-context.js
 │   ├── controllers/
 │   │   ├── controller-test-helpers.js
 │   │   ├── mock-entries.js

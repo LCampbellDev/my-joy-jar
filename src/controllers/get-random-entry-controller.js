@@ -1,4 +1,7 @@
 import { entryRepo } from '../repositories/mysql-entry.repo';
+import { HTTP_STATUS } from '../constants/http-status';
+import { RESPONSE_MESSAGES } from '../constants/response-messages';
+import { ERROR_CONTEXT } from '../constants/error-context';
 
 /**
  * Handles GET /api/entries/random.
@@ -17,16 +20,16 @@ export const getRandomEntryController = async (req, res) => {
     const entry = await entryRepo.getRandom();
 
     if (!entry) {
-      return res.status(404).json({
-        message: 'No entries are available.',
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
+        message: RESPONSE_MESSAGES.EMPTY_JAR,
       });
     }
 
-    return res.status(200).json(entry);
+    return res.status(HTTP_STATUS.OK).json(entry);
   } catch (error) {
-    console.error('Error fetching a random entry', error);
+    console.error(ERROR_CONTEXT.FETCH_RANDOM_ENTRY, error);
 
-    throw new Error(`Error fetching a random entry: ${error.message}`, {
+    throw new Error(`${ERROR_CONTEXT.FETCH_RANDOM_ENTRY}: ${error.message}`, {
       cause: error,
     });
   }

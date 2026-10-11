@@ -27,8 +27,7 @@ describe('createEntryRouter', () => {
 
     // Act
     const route = router.stack.find(
-      (layer) =>
-        layer.route?.path === '/random' && layer.route.methods.get,
+      (layer) => layer.route?.path === '/random' && layer.route.methods.get,
     );
 
     // Assert
@@ -56,8 +55,7 @@ describe('createEntryRouter', () => {
 
     // Act
     const route = router.stack.find(
-      (layer) =>
-        layer.route?.path === '/:id' && layer.route.methods.delete,
+      (layer) => layer.route?.path === '/:id' && layer.route.methods.delete,
     );
 
     // Assert

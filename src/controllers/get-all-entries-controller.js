@@ -1,4 +1,6 @@
 import { entryRepo } from '../repositories/mysql-entry.repo';
+import { HTTP_STATUS } from '../constants/http-status';
+import { ERROR_CONTEXT } from '../constants/error-context';
 
 /**
  * Handles GET /api/entries.
@@ -16,11 +18,11 @@ export const getAllEntriesController = async (req, res) => {
 
     const entries = await entryRepo.getAll();
 
-    return res.status(200).json(entries);
+    return res.status(HTTP_STATUS.OK).json(entries);
   } catch (error) {
-    console.error('Error fetching all entries', error);
+    console.error(ERROR_CONTEXT.FETCH_ENTRIES, error);
 
-    throw new Error(`Error fetching all entries: ${error.message}`, {
+    throw new Error(`${ERROR_CONTEXT.FETCH_ENTRIES}: ${error.message}`, {
       cause: error,
     });
   }
