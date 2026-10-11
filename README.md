@@ -93,6 +93,7 @@ my-joy-jar/
 ├── .prettierrc.json
 ├── api-requests.http
 ├── eslint.config.js
+├── jest.config.js
 ├── jsdoc.config.json
 ├── package.json
 ├── README.md
@@ -265,6 +266,33 @@ npm test
 Automated tests use mocked database results. They do not verify SQL execution, schema compatibility or persistence against a real MySQL database.
 
 Manual database and API checks complement these tests. Server startup has also been checked with `npm start`.
+
+### Code coverage
+
+Run all unit and API tests together with Jest coverage:
+
+```bash
+npm run test:coverage
+```
+
+The command prints a coverage table in the terminal and generates an HTML
+report at `coverage/index.html`.
+
+Coverage includes application JavaScript files under `src/`, including
+files not imported by tests. Test files are excluded from measurement.
+Generated reports are excluded from Git.
+
+The combined report includes coverage from both unit and API tests.
+Validation exercised by unit tests therefore contributes to the overall
+report, even when individual API tests do not exercise every validation case.
+
+Currently, `server.js` and `src/scripts/test-db-connection.js` are not
+covered by the automated suite. They remain visible in the report.
+
+Coverage shows which code executed; it does not prove every behaviour is
+correct. Database configuration coverage also does not verify a real
+MySQL connection, and mocked repository tests do not execute SQL against
+a real database.
 
 ## Manual API testing
 

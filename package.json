@@ -1,13 +1,11 @@
 {
   "name": "my-joy-jar",
   "version": "1.0.0",
-  "description": "A REST API for saving and rediscovering gratitude, compliments and joyful moments.",
-  "author": "Larna Campbell",
   "private": true,
   "engines": {
     "node": ">=24"
   },
-  "description": "",
+  "description": "A REST API for saving and rediscovering gratitude, compliments and joyful moments.",
   "main": "src/server.js",
   "type": "module",
   "scripts": {
@@ -17,6 +15,7 @@
     "unit-test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathIgnorePatterns=\\.api\\.test\\.js$",
     "api-test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testMatch=**/*.api.test.js",
     "test": "npm run unit-test && npm run api-test",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "lint": "eslint .",
@@ -30,7 +29,7 @@
     "url": "git+https://github.com/LCampbellDev/my-joy-jar.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Larna Campbell",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/LCampbellDev/my-joy-jar/issues"
