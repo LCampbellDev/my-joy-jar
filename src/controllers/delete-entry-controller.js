@@ -8,7 +8,7 @@ import { RESPONSE_MESSAGES } from '../constants/response-messages';
  * Validates the URL ID and converts it to a number before deleting.
  * Responds with 200 and the deleted entry, 400 for an invalid ID,
  * or 404 if the entry does not exist.
- * Repository failures are logged and rethrown for central error middleware.
+ * Repository failures are wrapped with context and rethrown for central error middleware.
  *
  * @param {Object} req - The Express request containing the entry ID in params.id.
  * @param {Object} res - The Express response used to send JSON.

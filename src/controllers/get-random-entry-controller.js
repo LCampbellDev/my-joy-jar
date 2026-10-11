@@ -7,7 +7,7 @@ import { ERROR_CONTEXT } from '../constants/error-context';
  * Handles GET /api/entries/random.
  * Responds with 200 and one randomly selected entry,
  * or 404 if the jar is empty.
- * Repository failures are logged and rethrown for central error middleware.
+ * Repository failures are wrapped with context and rethrown for central error middleware.
  *
  * @param {Object} req - The Express request; no request data is used.
  * @param {Object} res - The Express response used to send JSON.
