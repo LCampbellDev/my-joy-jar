@@ -1,10 +1,10 @@
 import { jest } from '@jest/globals';
-import { mockEntries } from './mock-entries';
+import { mockEntries } from '../../tests/mock-entries';
 
 import {
   createMockEntryRepo,
   createMockResponse,
-} from './controller-test-helpers';
+} from '../../tests/test-helpers';
 
 const entryRepo = createMockEntryRepo();
 
@@ -18,7 +18,37 @@ const { getAllEntriesController } =
 
 describe('getAllEntriesController', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
+  });
+
+  it('returns all entries with status 200', async () => {
+    // Arrange
+    entryRepo.getAll.mockResolvedValue(mockEntries);
+
+    const req = {};
+    const res = createMockResponse();
+
+    // Act
+    await getAllEntriesController(req, res);
+
+    // Assert
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith(mockEntries);
+  });
+
+  it('returns an empty array with status 200 when no entries exist', async () => {
+    // Arrange
+    entryRepo.getAll.mockResolvedValue([]);
+
+    const req = {};
+    const res = createMockResponse();
+
+    // Act
+    await getAllEntriesController(req, res);
+
+    // Assert
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith([]);
   });
 
   it('throws a contextual error when retrieving entries fails', async () => {
@@ -37,35 +67,9 @@ describe('getAllEntriesController', () => {
     await expect(result).rejects.toThrow(
       'Error fetching all entries: Database unavailable',
     );
-  });
+    await expect(result).rejects.toHaveProperty('cause', databaseError);
 
-  it('returns an empty array with status 200 when no entries exist', async () => {
-    // Arrange
-    entryRepo.getAll.mockResolvedValue([]);
-
-    const req = {};
-    const res = createMockResponse();
-
-    // Act
-    await getAllEntriesController(req, res);
-
-    // Assert
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith([]);
-  });
-
-  it('returns all entries with status 200', async () => {
-    // Arrange
-    entryRepo.getAll.mockResolvedValue(mockEntries);
-
-    const req = {};
-    const res = createMockResponse();
-
-    // Act
-    await getAllEntriesController(req, res);
-
-    // Assert
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith(mockEntries);
+    expect(res.status).not.toHaveBeenCalled();
+    expect(res.json).not.toHaveBeenCalled();
   });
 });

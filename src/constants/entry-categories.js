@@ -4,7 +4,7 @@
  *
  * @type {ReadonlyArray<string>}
  */
-export const ALLOWED_CATEGORIES = Object.freeze([
+export const ALLOWED_ENTRY_CATEGORIES = Object.freeze([
   'gratitude',
   'compliment',
   'joyful-moment',

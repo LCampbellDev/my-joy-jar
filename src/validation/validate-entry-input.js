@@ -1,4 +1,5 @@
-import { ALLOWED_CATEGORIES } from '../constants/entry-categories';
+import { ALLOWED_ENTRY_CATEGORIES } from '../constants/entry-categories';
+import { ENTRY_VALIDATION_MESSAGES } from '../constants/validation-messages';
 
 /**
  * Checks whether a value is undefined, null or an empty string.
@@ -25,21 +26,21 @@ export const validateEntryInput = ({ category, content } = {}) => {
   const validationErrors = [];
 
   if (isMissingValue(category)) {
-    validationErrors.push('Category is required.');
+    validationErrors.push(ENTRY_VALIDATION_MESSAGES.CATEGORY_REQUIRED);
   } else if (typeof category !== 'string') {
-    validationErrors.push('Category must be a string.');
-  } else if (!ALLOWED_CATEGORIES.includes(category)) {
+    validationErrors.push(ENTRY_VALIDATION_MESSAGES.CATEGORY_MUST_BE_STRING);
+  } else if (!ALLOWED_ENTRY_CATEGORIES.includes(category)) {
     validationErrors.push(
-      `Category must be one of: ${ALLOWED_CATEGORIES.join(', ')}.`,
+      ENTRY_VALIDATION_MESSAGES.CATEGORY_UNSUPPORTED(ALLOWED_ENTRY_CATEGORIES),
     );
   }
 
   if (isMissingValue(content)) {
-    validationErrors.push('Content is required.');
+    validationErrors.push(ENTRY_VALIDATION_MESSAGES.CONTENT_REQUIRED);
   } else if (typeof content !== 'string') {
-    validationErrors.push('Content must be a string.');
+    validationErrors.push(ENTRY_VALIDATION_MESSAGES.CONTENT_MUST_BE_STRING);
   } else if (!content.trim()) {
-    validationErrors.push('Content cannot be empty.');
+    validationErrors.push(ENTRY_VALIDATION_MESSAGES.CONTENT_CANNOT_BE_EMPTY);
   }
 
   return validationErrors;

@@ -1,19 +1,12 @@
 import { jest } from '@jest/globals';
-import { mockEntries } from './mock-entries';
+import { mockEntry } from '../../tests/mock-entries';
 
 import {
   createMockEntryRepo,
   createMockResponse,
-} from './controller-test-helpers';
+} from '../../tests/test-helpers';
 
 const entryRepo = createMockEntryRepo();
-
-// repo mock required for ESM
-jest.unstable_mockModule('../repositories/mysql-entry.repo', () => ({
-  entryRepo,
-}));
-
-const mockEntry = mockEntries[0];
 
 // Repo mock required for ESM
 jest.unstable_mockModule('../repositories/mysql-entry.repo', () => ({
@@ -24,7 +17,7 @@ const { deleteEntryController } = await import('./delete-entry-controller');
 
 describe('deleteEntryController', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('deletes an entry and returns status 200', async () => {
@@ -95,14 +88,10 @@ describe('deleteEntryController', () => {
     });
   });
 
-  it('logs and throws when deleting an entry fails', async () => {
+  it('throws a contextual error when deleting an entry fails', async () => {
     // Arrange
     const databaseError = new Error('Database unavailable');
     entryRepo.delete.mockRejectedValue(databaseError);
-
-    const consoleErrorSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
 
     const req = {
       params: {
@@ -112,21 +101,16 @@ describe('deleteEntryController', () => {
 
     const res = createMockResponse();
 
-    try {
-      // Act and Assert
-      await expect(deleteEntryController(req, res)).rejects.toThrow(
-        'Error deleting entry: Database unavailable',
-      );
+    // Act
+    const result = deleteEntryController(req, res);
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Error deleting entry',
-        databaseError,
-      );
+    // Assert
+    await expect(result).rejects.toThrow(
+      'Error deleting entry: Database unavailable',
+    );
+    await expect(result).rejects.toHaveProperty('cause', databaseError);
 
-      expect(res.status).not.toHaveBeenCalled();
-      expect(res.json).not.toHaveBeenCalled();
-    } finally {
-      consoleErrorSpy.mockRestore();
-    }
+    expect(res.status).not.toHaveBeenCalled();
+    expect(res.json).not.toHaveBeenCalled();
   });
 });

@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import { mockEntries } from '../controllers/mock-entries';
-import { createMockEntryRepo } from '../controllers/controller-test-helpers';
+import { mockEntries } from '../../tests/mock-entries';
+import { createMockEntryRepo } from '../../tests/test-helpers';
 
 const entryRepo = createMockEntryRepo();
 
@@ -13,7 +13,7 @@ const { default: app } = await import('../app');
 
 describe('GET /api/entries', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('returns all entries with status 200', async () => {

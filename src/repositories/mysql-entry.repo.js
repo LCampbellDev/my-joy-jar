@@ -23,7 +23,6 @@ import database from '../config/database';
  * @param {number|string} id - The entry ID, supplied as a number or numeric string.
  * @returns {Promise<Entry|null>} The matching entry, or null if none exists.
  */
-
 const getById = async (id) => {
   const [entries] = await database.execute(
     `SELECT

@@ -40,7 +40,10 @@ my-joy-jar/
 │   ├── config/
 │   │   └── database.js
 │   ├── constants/
-│   │   └── entry-categories.js
+│   │   ├── entry-categories.js
+│   │   ├── http-status.js
+│   │   ├── response-messages.js
+│   │   └── error-context.js
 │   ├── controllers/
 │   │   ├── controller-test-helpers.js
 │   │   ├── mock-entries.js
@@ -74,6 +77,9 @@ my-joy-jar/
 │   │   └── validate-entry-input.test.js
 │   ├── app.js
 │   └── server.js
+├── tests/
+│   ├── mock-entries.js
+│   └── test-helpers.js
 ├── .env.example
 ├── .gitignore
 ├── .prettierignore

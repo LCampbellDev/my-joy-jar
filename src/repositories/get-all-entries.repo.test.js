@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { mockEntries } from '../controllers/mock-entries';
+import { mockEntries } from '../../tests/mock-entries';
 
 const database = {
   execute: jest.fn(),
@@ -46,7 +46,10 @@ describe('entryRepo.getAll', () => {
     const databaseError = new Error('Database unavailable');
     database.execute.mockRejectedValue(databaseError);
 
-    // Act and Assert
-    await expect(entryRepo.getAll()).rejects.toBe(databaseError);
+    // Act
+    const result = entryRepo.getAll();
+
+    // Assert
+    await expect(result).rejects.toBe(databaseError);
   });
 });

@@ -1,10 +1,10 @@
 import { jest } from '@jest/globals';
-import { mockEntry } from './mock-entries';
+import { mockEntry } from '../../tests/mock-entries';
 
 import {
   createMockEntryRepo,
   createMockResponse,
-} from './controller-test-helpers';
+} from '../../tests/test-helpers';
 
 const entryRepo = createMockEntryRepo();
 
@@ -18,7 +18,7 @@ const { getRandomEntryController } =
 
 describe('getRandomEntryController', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('returns a random entry with status 200', async () => {
@@ -69,5 +69,9 @@ describe('getRandomEntryController', () => {
     await expect(result).rejects.toThrow(
       'Error fetching a random entry: Database unavailable',
     );
+    await expect(result).rejects.toHaveProperty('cause', databaseError);
+
+    expect(res.status).not.toHaveBeenCalled();
+    expect(res.json).not.toHaveBeenCalled();
   });
 });

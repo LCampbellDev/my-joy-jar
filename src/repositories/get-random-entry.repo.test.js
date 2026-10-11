@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { mockEntries } from '../controllers/mock-entries';
+import { mockEntry } from '../../tests/mock-entries';
 
 const database = {
   execute: jest.fn(),
@@ -18,7 +18,6 @@ describe('entryRepo.getRandom', () => {
 
   it('returns a single entry from the database', async () => {
     // Arrange
-    const mockEntry = mockEntries[0];
     database.execute.mockResolvedValue([[mockEntry]]);
 
     // Act
@@ -47,7 +46,10 @@ describe('entryRepo.getRandom', () => {
     const databaseError = new Error('Database unavailable');
     database.execute.mockRejectedValue(databaseError);
 
-    // Act and Assert
-    await expect(entryRepo.getRandom()).rejects.toBe(databaseError);
+    // Act
+    const result = entryRepo.getRandom();
+
+    // Assert
+    await expect(result).rejects.toBe(databaseError);
   });
 });

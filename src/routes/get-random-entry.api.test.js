@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import { mockEntries } from '../controllers/mock-entries';
-import { createMockEntryRepo } from '../controllers/controller-test-helpers';
+import { mockEntry } from '../../tests/mock-entries';
+import { createMockEntryRepo } from '../../tests/test-helpers';
 
 const entryRepo = createMockEntryRepo();
 
@@ -13,12 +13,11 @@ const { default: app } = await import('../app');
 
 describe('GET /api/entries/random', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('returns a random entry with status 200', async () => {
     // Arrange
-    const mockEntry = mockEntries[0];
     entryRepo.getRandom.mockResolvedValue(mockEntry);
 
     // Act
@@ -38,6 +37,9 @@ describe('GET /api/entries/random', () => {
 
     // Assert
     expect(response.status).toEqual(404);
+    expect(response.body).toEqual({
+      message: 'No entries are available.',
+    });
   });
 
   it('returns status 500 when retrieving a random entry fails', async () => {

@@ -1,12 +1,14 @@
 import { entryRepo } from '../repositories/mysql-entry.repo';
 import { isValidId } from '../validation/is-valid-id';
+import { HTTP_STATUS } from '../constants/http-status';
+import { RESPONSE_MESSAGES } from '../constants/response-messages';
 
 /**
  * Handles DELETE /api/entries/:id.
  * Validates the URL ID and converts it to a number before deleting.
  * Responds with 200 and the deleted entry, 400 for an invalid ID,
  * or 404 if the entry does not exist.
- * Repository failures are logged and rethrown for central error middleware.
+ * Repository failures are wrapped with context and rethrown for central error middleware.
  *
  * @param {Object} req - The Express request containing the entry ID in params.id.
  * @param {Object} res - The Express response used to send JSON.
@@ -16,8 +18,8 @@ export const deleteEntryController = async (req, res) => {
   const { id } = req.params;
 
   if (!isValidId(id)) {
-    return res.status(400).json({
-      message: 'Entry ID must be a positive integer.',
+    return res.status(HTTP_STATUS.BAD_REQUEST).json({
+      message: RESPONSE_MESSAGES.INVALID_ENTRY_ID,
     });
   }
 
@@ -29,13 +31,13 @@ export const deleteEntryController = async (req, res) => {
     const entry = await entryRepo.delete(entryId);
 
     if (!entry) {
-      return res.status(404).json({
-        message: 'Entry not found.',
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
+        message: RESPONSE_MESSAGES.ENTRY_NOT_FOUND,
       });
     }
 
-    return res.status(200).json({
-      message: 'Entry deleted successfully.',
+    return res.status(HTTP_STATUS.OK).json({
+      message: RESPONSE_MESSAGES.ENTRY_DELETED,
       entry,
     });
   } catch (error) {

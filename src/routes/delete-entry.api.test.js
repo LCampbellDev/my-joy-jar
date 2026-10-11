@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
-import { mockEntries } from '../controllers/mock-entries';
-import { createMockEntryRepo } from '../controllers/controller-test-helpers';
+import { mockEntry } from '../../tests/mock-entries';
+import { createMockEntryRepo } from '../../tests/test-helpers';
 
 const entryRepo = createMockEntryRepo();
 
@@ -13,12 +13,11 @@ const { default: app } = await import('../app');
 
 describe('DELETE /api/entries/:id', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('deletes an entry and returns status 200', async () => {
     // Arrange
-    const mockEntry = mockEntries[0];
     entryRepo.delete.mockResolvedValue(mockEntry);
 
     // Act
@@ -30,6 +29,7 @@ describe('DELETE /api/entries/:id', () => {
       message: 'Entry deleted successfully.',
       entry: mockEntry,
     });
+    expect(entryRepo.delete).toHaveBeenCalledWith(mockEntry.id);
   });
 
   it('returns status 400 when the entry ID is invalid', async () => {
@@ -41,6 +41,7 @@ describe('DELETE /api/entries/:id', () => {
     expect(response.body).toEqual({
       message: 'Entry ID must be a positive integer.',
     });
+    expect(entryRepo.delete).not.toHaveBeenCalled();
   });
 
   it('returns status 404 when the entry does not exist', async () => {
@@ -48,9 +49,7 @@ describe('DELETE /api/entries/:id', () => {
     entryRepo.delete.mockResolvedValue(null);
 
     // Act
-    const response = await request(app).delete(
-      `/api/entries/${mockEntries[0].id}`,
-    );
+    const response = await request(app).delete(`/api/entries/${mockEntry.id}`);
 
     // Assert
     expect(response.status).toEqual(404);
@@ -64,9 +63,7 @@ describe('DELETE /api/entries/:id', () => {
     entryRepo.delete.mockRejectedValue(new Error('Database unavailable'));
 
     // Act
-    const response = await request(app).delete(
-      `/api/entries/${mockEntries[0].id}`,
-    );
+    const response = await request(app).delete(`/api/entries/${mockEntry.id}`);
 
     // Assert
     expect(response.status).toEqual(500);
