@@ -59,7 +59,8 @@ my-joy-jar/
 │   │   ├── error-context.js
 │   │   ├── validation-messages.js
 │   │   ├── pagination.js
-│   │   └── log-messages.js
+│   │   ├── log-messages.js
+│   │   └── rate-limit.js
 │   ├── controllers/
 │   │   ├── create-entry-controller.js
 │   │   ├── create-entry-controller.test.js
@@ -74,7 +75,10 @@ my-joy-jar/
 │   │   └── create-pagination.test.js
 │   ├── middleware/
 │   │   ├── error-handler.js
-│   │   └── error-handler.test.js
+│   │   ├── error-handler.test.js
+│   │   ├── create-entry-rate-limiter.js
+│   │   ├── create-entry-rate-limiter.api.test.js
+│   │   └── security-headers.api.test.js
 │   ├── repositories/
 │   │   ├── mysql-entry.repo.js
 │   │   ├── create-entry.repo.test.js
@@ -89,13 +93,13 @@ my-joy-jar/
 │   │   ├── get-all-entries.api.test.js
 │   │   ├── get-random-entry.api.test.js
 │   │   ├── health.js
-│   │   └──  health.api.test.js
+│   │   └── health.api.test.js
 │   ├── scripts/
 │   │   └── test-db-connection.js
 │   ├── validation/
 │   │   │   └── helpers
-│   │   │       ├──is-positive-integer-string.js
-│   │   │       └──is-positive-integer-string.test.js
+│   │   │       ├── is-positive-integer-string.js
+│   │   │       └── is-positive-integer-string.test.js
 │   │   ├── validate-entry-input.js
 │   │   ├── validate-entry-input.test.js
 │   │   ├── validate-pagination.js
@@ -137,7 +141,6 @@ The API currently supports:
 | `GET`    | `/api/entries/random` | Retrieve a random entry   |
 | `DELETE` | `/api/entries/:id`    | Delete a specified entry  |
 | `HEALTH` | `/api/entries/health` | Confirm server responsive |
-
 
 ## Database setup
 
@@ -362,10 +365,10 @@ Entries with matching creation timestamps are ordered by ID descending.
 
 #### Query parameters
 
-| Parameter | Default | Description |
-|---|---|---|
-| `page` | 1 | Positive integer identifying the requested page. |
-| `limit` | 10 | Positive integer page size, up to 100. |
+| Parameter | Default | Description                                      |
+| --------- | ------- | ------------------------------------------------ |
+| `page`    | 1       | Positive integer identifying the requested page. |
+| `limit`   | 10      | Positive integer page size, up to 100.           |
 
 Example:
 
@@ -479,6 +482,31 @@ DELETE /api/entries/3
 
 A successful request returns the deleted entry. The API returns `400 Bad Request` if the ID is not a positive integer and `404 Not Found` when no entry has the requested ID.
 
+## Security middleware
+
+Helmet adds security-related HTTP response headers to successful and
+error responses, and removes the `X-Powered-By` header.
+
+The entry API allows 100 requests per client IP address within a
+15-minute window. Requests beyond the allowance receive status 429:
+
+    { "message": "Too many requests. Please try again later." }
+
+Rate-limit headers describe the allowance, and blocked responses include
+`Retry-After`, indicating how many seconds to wait before retrying.
+The `/health` endpoint is outside the entry API limit.
+
+The limiter uses an in-memory store. Counts reset when the server restarts
+and are not shared between server processes. A deployment with multiple
+instances would need a shared store. Proxy settings must also be reviewed
+for the actual hosting setup so client addresses are identified correctly.
+
+Malformed JSON request bodies receive status 400 with:
+
+    { "message": "Request body must contain valid JSON." }
+
+Unexpected application failures continue to receive a generic 500 response.
+
 ## Documentation
 
 Generate the HTML documentation:
@@ -497,16 +525,22 @@ Generated HTML is written to docs/ and is excluded from Git.
 
 - JavaScript
 - Node.js
-- Express
-- MySQL
-- mysql2
-- Morgan
-- dotenv
-- Nodemon
-- ESLint
-- Prettier
-- Jest — unit testing
-- Supertest — API testing
+- Express — routing and middleware
+- MySQL — database
+- mysql2 — MySQL client with promise support
+- Morgan — HTTP request logging
+- dotenv — environment variable loading
+- Nodemon — automatic server restarts during development
+- Webpack — bundles the server and resolves extensionless imports
+- webpack-cli — runs Webpack commands
+- webpack-node-externals — keeps Node dependencies outside the bundle
+- ESLint — code linting
+- Prettier — code formatting
+- Jest — unit and API test runner, with coverage reporting
+- Supertest — HTTP assertions for API tests
+- JSDoc — generates HTML documentation from source comments
+- Helmet — security-related HTTP response headers
+- express-rate-limit — entry API request limitingx`x
 
 ## Running the project locally
 

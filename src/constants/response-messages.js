@@ -11,4 +11,6 @@ export const RESPONSE_MESSAGES = Object.freeze({
   ENTRY_NOT_FOUND: 'Entry not found.',
   EMPTY_JAR: 'No entries are available.',
   INTERNAL_ERROR: 'Something went wrong. Please try again later.',
+  RATE_LIMIT_EXCEEDED: 'Too many requests. Please try again later.',
+  INVALID_JSON: 'Request body must contain valid JSON.',
 });

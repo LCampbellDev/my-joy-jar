@@ -8,6 +8,27 @@ describe('errorHandler', () => {
     jest.resetAllMocks();
   });
 
+  it('returns status 400 when the request body contains malformed JSON', () => {
+    // Arrange
+    const error = new SyntaxError('Unexpected end of JSON input');
+    error.type = 'entity.parse.failed';
+
+    const req = {};
+    const res = createMockResponse();
+    res.headersSent = false;
+    const next = jest.fn();
+
+    // Act
+    errorHandler(error, req, res, next);
+
+    // Assert
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Request body must contain valid JSON.',
+    });
+    expect(next).not.toHaveBeenCalled();
+  });
+
   it('returns a generic error message with status 500', () => {
     // Arrange
     const error = new Error('Database unavailable');
