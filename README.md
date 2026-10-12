@@ -60,7 +60,7 @@ my-joy-jar/
 │   │   ├── validation-messages.js
 │   │   ├── pagination.js
 │   │   ├── log-messages.js
-│   │   └── rate=limit.js
+│   │   └── rate-limit.js
 │   ├── controllers/
 │   │   ├── create-entry-controller.js
 │   │   ├── create-entry-controller.test.js
@@ -525,16 +525,22 @@ Generated HTML is written to docs/ and is excluded from Git.
 
 - JavaScript
 - Node.js
-- Express
-- MySQL
-- mysql2
-- Morgan
-- dotenv
-- Nodemon
-- ESLint
-- Prettier
-- Jest — unit testing
-- Supertest — API testing
+- Express — routing and middleware
+- MySQL — database
+- mysql2 — MySQL client with promise support
+- Morgan — HTTP request logging
+- dotenv — environment variable loading
+- Nodemon — automatic server restarts during development
+- Webpack — bundles the server and resolves extensionless imports
+- webpack-cli — runs Webpack commands
+- webpack-node-externals — keeps Node dependencies outside the bundle
+- ESLint — code linting
+- Prettier — code formatting
+- Jest — unit and API test runner, with coverage reporting
+- Supertest — HTTP assertions for API tests
+- JSDoc — generates HTML documentation from source comments
+- Helmet — security-related HTTP response headers
+- express-rate-limit — entry API request limitingx`x
 
 ## Running the project locally
 
