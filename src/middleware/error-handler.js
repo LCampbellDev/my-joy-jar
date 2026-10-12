@@ -3,11 +3,9 @@ import { RESPONSE_MESSAGES } from '../constants/response-messages';
 
 /**
  * Handles errors passed through the Express middleware chain.
- * Logs detailed request failures centrally.
- * Controllers preserve error context without logging it again.
- * Morgan separately logs HTTP request summaries.
- * Sends a generic 500 response, or delegates to the next error handler
- * if response headers were already sent.
+ * Returns 400 for malformed JSON and a generic 500 for unexpected failures.
+ * Logs unexpected failures centrally; Morgan logs HTTP request summaries.
+ * Delegates to the next error handler if response headers were already sent.
  *
  * @param {Error} error - The request error.
  * @param {Object} req - The Express request.
@@ -15,10 +13,15 @@ import { RESPONSE_MESSAGES } from '../constants/response-messages';
  * @param {Function} next - Passes the error to the next handler.
  * @returns {Object|undefined} The response, or the result of delegation.
  */
-
 export const errorHandler = (error, req, res, next) => {
   if (res.headersSent) {
     return next(error);
+  }
+
+  if (error.type === 'entity.parse.failed') {
+    return res.status(HTTP_STATUS.BAD_REQUEST).json({
+      message: RESPONSE_MESSAGES.INVALID_JSON,
+    });
   }
 
   console.error('Request failed', error);
