@@ -1,5 +1,5 @@
 import { entryRepo } from '../repositories/mysql-entry.repo';
-import { isValidId } from '../validation/is-valid-id';
+import { isPositiveIntegerString } from '../validation/helpers/is-positive-integer-string';
 import { HTTP_STATUS } from '../constants/http-status';
 import { RESPONSE_MESSAGES } from '../constants/response-messages';
 
@@ -17,7 +17,7 @@ import { RESPONSE_MESSAGES } from '../constants/response-messages';
 export const deleteEntryController = async (req, res) => {
   const { id } = req.params;
 
-  if (!isValidId(id)) {
+  if (!isPositiveIntegerString(id)) {
     return res.status(HTTP_STATUS.BAD_REQUEST).json({
       message: RESPONSE_MESSAGES.INVALID_ENTRY_ID,
     });

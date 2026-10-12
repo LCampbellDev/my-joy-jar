@@ -1,10 +1,15 @@
 import { entryRepo } from '../repositories/mysql-entry.repo';
 import { HTTP_STATUS } from '../constants/http-status';
 import { ERROR_CONTEXT } from '../constants/error-context';
+import { validatePagination } from '../validation/validate-pagination';
+import { LOG_MESSAGES } from '../constants/log-messages';
+import { RESPONSE_MESSAGES } from '../constants/response-messages';
+import { createPagination } from '../helpers/create-pagination';
 
 /**
- * Handles GET /api/entries.
- * Responds with 200 and all entries ordered from newest to oldest,
+ * Handles GET /api/entries with optional page and limit query parameters.
+ * Responds with 200 and entries plus pagination metadata,
+ * or 400 when pagination parameters are invalid.
  * or an empty array if no entries exist.
  * Repository failures are wrapped with context and rethrown for central error middleware.
  *
@@ -13,15 +18,27 @@ import { ERROR_CONTEXT } from '../constants/error-context';
  * @returns {Promise<Object>} The Express response after sending JSON.
  */
 export const getAllEntriesController = async (req, res) => {
+  const { page, limit, offset, validationErrors } = validatePagination(
+    req.query,
+  );
+
+  if (validationErrors.length) {
+    return res.status(HTTP_STATUS.BAD_REQUEST).json({
+      message: RESPONSE_MESSAGES.VALIDATION_ERROR,
+      errors: validationErrors,
+    });
+  }
+
   try {
-    console.info('Fetching all entries');
+    console.info(LOG_MESSAGES.FETCH_ENTRIES);
 
-    const entries = await entryRepo.getAll();
+    const { entries, total } = await entryRepo.getAll({ limit, offset });
 
-    return res.status(HTTP_STATUS.OK).json(entries);
+    return res.status(HTTP_STATUS.OK).json({
+      entries,
+      pagination: createPagination({ page, limit, total }),
+    });
   } catch (error) {
-    console.error(ERROR_CONTEXT.FETCH_ENTRIES, error);
-
     throw new Error(`${ERROR_CONTEXT.FETCH_ENTRIES}: ${error.message}`, {
       cause: error,
     });
