@@ -12,14 +12,12 @@ export const ENTRY_VALIDATION_MESSAGES = {
   CONTENT_CANNOT_BE_EMPTY: 'Content cannot be empty.',
 };
 
-
 /**
  * Validation messages for entry pagination query parameters.
  */
 export const PAGINATION_VALIDATION_MESSAGES = Object.freeze({
   PAGE_INVALID: 'Page must be a positive integer.',
   LIMIT_INVALID: 'Limit must be a positive integer.',
-  LIMIT_TOO_LARGE: (maxLimit) =>
-    `Limit must be no greater than ${maxLimit}.`,
+  LIMIT_TOO_LARGE: (maxLimit) => `Limit must be no greater than ${maxLimit}.`,
   OFFSET_TOO_LARGE: 'The requested page is too large.',
 });

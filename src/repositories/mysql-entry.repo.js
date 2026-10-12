@@ -43,7 +43,7 @@ const getById = async (id) => {
  * Database failures reject the returned promises.
  */
 export const entryRepo = {
-    /**
+  /**
    * Retrieves a page of entries and the total entry count.
    * Orders entries newest first, using ID to break timestamp ties.
    *

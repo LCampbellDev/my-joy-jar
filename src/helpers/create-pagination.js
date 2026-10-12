@@ -14,4 +14,3 @@ export const createPagination = ({ page, limit, total }) => ({
   total,
   totalPages: Math.ceil(total / limit),
 });
-

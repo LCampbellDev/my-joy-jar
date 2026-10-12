@@ -57,7 +57,9 @@ my-joy-jar/
 │   │   ├── http-status.js
 │   │   ├── response-messages.js
 │   │   ├── error-context.js
-│   │   └── validation-messages.js
+│   │   ├── validation-messages.js
+│   │   ├── pagination.js
+│   │   └── log-messages.js
 │   ├── controllers/
 │   │   ├── create-entry-controller.js
 │   │   ├── create-entry-controller.test.js
@@ -67,6 +69,9 @@ my-joy-jar/
 │   │   ├── get-all-entries-controller.test.js
 │   │   ├── get-random-entry-controller.js
 │   │   └── get-random-entry-controller.test.js
+│   ├── helpers/
+│   │   ├── create-pagination.js
+│   │   └── create-pagination.test.js
 │   ├── middleware/
 │   │   ├── error-handler.js
 │   │   └── error-handler.test.js
@@ -88,10 +93,13 @@ my-joy-jar/
 │   ├── scripts/
 │   │   └── test-db-connection.js
 │   ├── validation/
-│   │   ├── is-valid-id.js
-│   │   ├── is-valid-id.test.js
+│   │   │   └── helpers
+│   │   │       ├──is-positive-integer-string.js
+│   │   │       └──is-positive-integer-string.test.js
 │   │   ├── validate-entry-input.js
-│   │   └── validate-entry-input.test.js
+│   │   ├── validate-entry-input.test.js
+│   │   ├── validate-pagination.js
+│   │   └── validate-pagination.test.js
 │   ├── app.js
 │   └── server.js
 ├── tests/
@@ -129,6 +137,7 @@ The API currently supports:
 | `GET`    | `/api/entries/random` | Retrieve a random entry   |
 | `DELETE` | `/api/entries/:id`    | Delete a specified entry  |
 | `HEALTH` | `/api/entries/health` | Confirm server responsive |
+
 
 ## Database setup
 
@@ -345,6 +354,82 @@ npm run dev
 The requests can be run using a compatible VS Code HTTP client extension or copied into Postman.
 
 Morgan logs each HTTP request in the terminal running the development server, including the request method, route, response status, response time, and response size.
+
+### Get entries
+
+`GET /api/entries` returns a page of entries, ordered newest first.
+Entries with matching creation timestamps are ordered by ID descending.
+
+#### Query parameters
+
+| Parameter | Default | Description |
+|---|---|---|
+| `page` | 1 | Positive integer identifying the requested page. |
+| `limit` | 10 | Positive integer page size, up to 100. |
+
+Example:
+
+```http
+GET http://localhost:3000/api/entries?page=2&limit=10
+```
+
+#### Response
+
+Returns status 200 with an object containing `entries` and `pagination`.
+This replaces the previous array-only response.
+
+```json
+{
+  "entries": [
+    {
+      "id": 15,
+      "category": "gratitude",
+      "content": "I am grateful for a peaceful morning.",
+      "createdAt": "2026-10-12T12:00:00.000Z"
+    }
+  ],
+  "pagination": {
+    "page": 2,
+    "limit": 10,
+    "total": 11,
+    "totalPages": 2
+  }
+}
+```
+
+`total` counts all entries. `totalPages` is the total count divided by
+the page size, rounded up.
+
+An empty jar returns `entries: []`, `total: 0` and `totalPages: 0`.
+A page beyond the available results also returns an empty array with
+status 200, preserving the requested page number.
+
+#### Validation
+
+Parameters must be positive integer strings without leading zeros.
+Empty values, decimals, negative numbers, repeated parameters and unsafe
+integer values are rejected.
+
+A limit above 100 or an offset calculation outside the safe integer range
+is also rejected.
+
+Invalid parameters return status 400, for example:
+
+```json
+{
+  "message": "Validation errors.",
+  "errors": [
+    "Page must be a positive integer.",
+    "Limit must be no greater than 100."
+  ]
+}
+```
+
+#### Pagination limitations
+
+Entries and their total count are retrieved with separate queries.
+Concurrent inserts or deletes can affect their consistency and can shift
+entries between pages.
 
 ## Creating an entry
 

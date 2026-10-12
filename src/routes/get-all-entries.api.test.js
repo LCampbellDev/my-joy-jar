@@ -57,9 +57,7 @@ describe('GET /api/entries', () => {
     };
 
     // Act
-    const response = await request(app)
-      .get('/api/entries')
-      .query(query);
+    const response = await request(app).get('/api/entries').query(query);
 
     // Assert
     expect(response.status).toEqual(200);
@@ -115,9 +113,7 @@ describe('GET /api/entries', () => {
     };
 
     // Act
-    const response = await request(app)
-      .get('/api/entries')
-      .query(query);
+    const response = await request(app).get('/api/entries').query(query);
 
     // Assert
     expect(response.status).toEqual(200);
@@ -145,9 +141,7 @@ describe('GET /api/entries', () => {
     };
 
     // Act
-    const response = await request(app)
-      .get('/api/entries')
-      .query(query);
+    const response = await request(app).get('/api/entries').query(query);
 
     // Assert
     expect(response.status).toEqual(400);
@@ -164,9 +158,7 @@ describe('GET /api/entries', () => {
 
   it('returns status 400 when a pagination parameter is repeated', async () => {
     // Act
-    const response = await request(app).get(
-      '/api/entries?page=1&page=2',
-    );
+    const response = await request(app).get('/api/entries?page=1&page=2');
 
     // Assert
     expect(response.status).toEqual(400);

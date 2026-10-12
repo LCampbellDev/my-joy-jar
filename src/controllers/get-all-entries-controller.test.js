@@ -29,14 +29,14 @@ describe('getAllEntriesController', () => {
     });
 
     const expectedResponse = {
-    entries: mockEntries,
-    pagination: {
-      page: 1,
-      limit: 10,
-      total: 25,
-      totalPages: 3,
-    },
-  };
+      entries: mockEntries,
+      pagination: {
+        page: 1,
+        limit: 10,
+        total: 25,
+        totalPages: 3,
+      },
+    };
 
     const req = {
       query: {},
