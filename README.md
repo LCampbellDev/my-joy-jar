@@ -295,7 +295,7 @@ Automated tests use mocked database results. They do not verify SQL execution, s
 
 Manual database and API checks complement these tests. Server startup has also been checked with `npm start`.
 
-### Code coverage
+### Code test coverage
 
 Run all unit and API tests together with Jest coverage:
 
@@ -357,6 +357,25 @@ npm run dev
 The requests can be run using a compatible VS Code HTTP client extension or copied into Postman.
 
 Morgan logs each HTTP request in the terminal running the development server, including the request method, route, response status, response time, and response size.
+
+## Continuous integration
+
+GitHub Actions runs quality checks on pull requests targeting `main`
+and on pushes to `main`.
+
+The workflow uses Node.js 24 on an Ubuntu runner to:
+
+- Install dependencies from the lockfile with `npm ci`.
+- Check formatting with Prettier.
+- Lint code with ESLint.
+- Run unit and API tests with coverage thresholds.
+- Build the server with Webpack.
+- Generate JSDoc documentation.
+
+The tests use mocked database access and do not require a running MySQL
+server.
+
+The workflow is defined in `.github/workflows/quality-checks.yml`.
 
 ### Get entries
 
