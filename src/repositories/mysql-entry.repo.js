@@ -43,12 +43,16 @@ const getById = async (id) => {
  * Database failures reject the returned promises.
  */
 export const entryRepo = {
-  /**
-   * Retrieves all entries, ordered from newest to oldest.
+    /**
+   * Retrieves a page of entries and the total entry count.
+   * Orders entries newest first, using ID to break timestamp ties.
    *
-   * @returns {Promise<Entry[]>} All entries, or an empty array if none exist.
+   * @param {Object} options - Validated pagination options.
+   * @param {number} options.limit - Maximum number of entries to retrieve.
+   * @param {number} options.offset - Number of entries to skip.
+   * @returns {Promise<{entries: Entry[], total: number}>} The page and total count.
    */
-  async getAll() {
+  async getAll({ limit, offset }) {
     const [entries] = await database.execute(
       `SELECT
         id,
@@ -56,10 +60,19 @@ export const entryRepo = {
         content,
         created_at AS createdAt
       FROM entries
-      ORDER BY created_at DESC`,
+      ORDER BY created_at DESC, id DESC
+      LIMIT ? OFFSET ?`,
+      [limit, offset],
     );
 
-    return entries;
+    const [counts] = await database.execute(
+      'SELECT COUNT(*) AS total FROM entries',
+    );
+
+    return {
+      entries,
+      total: Number(counts[0].total),
+    };
   },
 
   /**

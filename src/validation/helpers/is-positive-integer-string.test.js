@@ -1,12 +1,12 @@
-import { isValidId } from './is-valid-id';
+import { isPositiveIntegerString } from './is-positive-integer-string';
 
-describe('isValidId', () => {
+describe('isPositiveIntegerString', () => {
   it('returns true for a positive integer string', () => {
     // Arrange
     const id = '1';
 
     // Act
-    const result = isValidId(id);
+    const result = isPositiveIntegerString(id);
 
     // Assert
     expect(result).toEqual(true);
@@ -17,7 +17,7 @@ describe('isValidId', () => {
     const id = '42';
 
     // Act
-    const result = isValidId(id);
+    const result = isPositiveIntegerString(id);
 
     // Assert
     expect(result).toEqual(true);
@@ -39,7 +39,7 @@ describe('isValidId', () => {
     // Arrange is provided by the test case.
 
     // Act
-    const result = isValidId(id);
+    const result = isPositiveIntegerString(id);
 
     // Assert
     expect(result).toEqual(false);
