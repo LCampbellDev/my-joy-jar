@@ -5,6 +5,7 @@ import { createMockEntryRepo } from '../../tests/test-helpers';
 
 const entryRepo = createMockEntryRepo();
 
+// repo mock required for ESM
 jest.unstable_mockModule('../repositories/mysql-entry.repo', () => ({
   entryRepo,
 }));

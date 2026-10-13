@@ -1,7 +1,7 @@
 import { rateLimit } from 'express-rate-limit';
 import { RATE_LIMIT } from '../constants/rate-limit';
 import { HTTP_STATUS } from '../constants/http-status';
-import { RESPONSE_MESSAGES } from '../constants/response-messages';
+import { RESPONSE_MESSAGES } from '../constants/messages-responses';
 
 /**
  * Creates rate-limiting middleware for entry API requests.

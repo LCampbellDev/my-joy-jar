@@ -5,7 +5,7 @@ import { getRandomEntryController } from '../controllers/get-random-entry-contro
 import { createEntryRouter } from './entries';
 
 // Check that each route is wired to the intended controller.
-// API tests separately check HTTP responses through the app.
+// Separate API tests check HTTP responses through the app.
 describe('createEntryRouter', () => {
   it('connects GET / to getAllEntriesController', () => {
     // Arrange

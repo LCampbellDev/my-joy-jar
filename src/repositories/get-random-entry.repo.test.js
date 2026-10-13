@@ -5,6 +5,7 @@ const database = {
   execute: jest.fn(),
 };
 
+// repo mock required for ESM
 jest.unstable_mockModule('../config/database', () => ({
   default: database,
 }));

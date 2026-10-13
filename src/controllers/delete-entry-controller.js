@@ -1,7 +1,9 @@
 import { entryRepo } from '../repositories/mysql-entry.repo';
 import { isPositiveIntegerString } from '../validation/helpers/is-positive-integer-string';
 import { HTTP_STATUS } from '../constants/http-status';
-import { RESPONSE_MESSAGES } from '../constants/response-messages';
+import { RESPONSE_MESSAGES } from '../constants/messages-responses';
+import { ERROR_CONTEXT } from '../constants/messages-error-context';
+import { LOG_MESSAGES } from '../constants/messages-logs';
 
 /**
  * Handles DELETE /api/entries/:id.
@@ -26,7 +28,7 @@ export const deleteEntryController = async (req, res) => {
   const entryId = Number(id);
 
   try {
-    console.info('Deleting entry');
+    console.info(LOG_MESSAGES.DELETE_ENTRY, { entryId });
 
     const entry = await entryRepo.delete(entryId);
 
@@ -41,9 +43,7 @@ export const deleteEntryController = async (req, res) => {
       entry,
     });
   } catch (error) {
-    console.error('Error deleting entry', error);
-
-    throw new Error(`Error deleting entry: ${error.message}`, {
+    throw new Error(`${ERROR_CONTEXT.DELETE_ENTRY}: ${error.message}`, {
       cause: error,
     });
   }

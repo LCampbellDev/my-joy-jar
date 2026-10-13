@@ -1,9 +1,9 @@
 import { entryRepo } from '../repositories/mysql-entry.repo';
 import { HTTP_STATUS } from '../constants/http-status';
-import { ERROR_CONTEXT } from '../constants/error-context';
+import { ERROR_CONTEXT } from '../constants/messages-error-context';
 import { validatePagination } from '../validation/validate-pagination';
-import { LOG_MESSAGES } from '../constants/log-messages';
-import { RESPONSE_MESSAGES } from '../constants/response-messages';
+import { LOG_MESSAGES } from '../constants/messages-logs';
+import { RESPONSE_MESSAGES } from '../constants/messages-responses';
 import { createPagination } from '../helpers/create-pagination';
 
 /**

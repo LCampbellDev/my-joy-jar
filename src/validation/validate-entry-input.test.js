@@ -14,6 +14,7 @@ import {
 import { validateEntryInput } from './validate-entry-input';
 
 describe('validateEntryInput', () => {
+  // Valid inputs
   it('returns no errors when category and content are valid', () => {
     // Arrange
     const input = validEntryInput;
@@ -36,6 +37,7 @@ describe('validateEntryInput', () => {
     expect(validationErrors).toEqual([]);
   });
 
+  // Category validation
   it('returns an error when category is missing', () => {
     // Arrange
     const input = missingCategoryInput;
@@ -71,6 +73,7 @@ describe('validateEntryInput', () => {
     ]);
   });
 
+  // Content validation
   it('returns an error when content is missing', () => {
     // Arrange
     const input = missingContentInput;
@@ -115,6 +118,7 @@ describe('validateEntryInput', () => {
     expect(validationErrors).toEqual(['Content cannot be empty.']);
   });
 
+  // Combined Content and category errors and missing fields
   it('returns both required errors when both fields are missing', () => {
     // Arrange
     const input = missingFieldsInput;

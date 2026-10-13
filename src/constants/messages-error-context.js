@@ -9,4 +9,5 @@ export const ERROR_CONTEXT = Object.freeze({
   FETCH_RANDOM_ENTRY: 'Error fetching a random entry',
   CREATE_ENTRY: 'Error creating entry',
   DELETE_ENTRY: 'Error deleting entry',
+  CHECK_READINESS: 'Error checking database readiness',
 });
