@@ -1,8 +1,8 @@
 # MyJoyJar
 
-MyJoyJar is a personal digital jar for saving gratitude, compliments, and joyful moments. And rediscovering them whenever they are needed.
+MyJoyJar is a personal digital jar for saving gratitude, compliments and joyful moments, and rediscovering them whenever they are needed.
 
-This repository contains a JavaScript REST API built with Node.js, Express, and MySQL. I am building the project incrementally, beginning with the backend API and persistent storage before adding a frontend.
+This repository contains a JavaScript REST API built with Node.js, Express and MySQL. I am building the project incrementally, beginning with the backend API and persistent storage before adding a frontend.
 
 ## Project idea
 
@@ -10,535 +10,23 @@ In a physical gratitude jar, someone might record positive experiences on pieces
 
 MyJoyJar brings that idea into a digital application. Entries can record:
 
-- something the user feels grateful for;
-- a compliment or kind thing someone said;
-- a joyful or meaningful moment.
+- Something the user feels grateful for.
+- A compliment or kind thing someone said.
+- A joyful or meaningful moment.
 
-Users can view their entries or draw one at random.
-
-## Project structure
-
-Routes and controller logic are kept separate.
-
-Each entry operation has its own controller:
-
-- `get-all-entries-controller.js`
-- `get-random-entry-controller.js`
-- `create-entry-controller.js`
-- `delete-entry-controller.js`
-
-The entry router maps each API endpoint to the relevant controller. Controllers validate requests, call repository methods, and construct HTTP responses. The repository handles parameterised MySQL queries.
-
-Controllers log database failures and throw errors with operation-specific context. Central error middleware in `src/app.js` returns a consistent `500 Internal Server Error` JSON response.
-
-### Health check
-
-`GET /health` returns status 200 with:
-
-```json
-{
-  "status": "ok"
-}
-```
-
-This is a liveness check: it confirms the server can respond to HTTP
-requests. It does not check MySQL connectivity or database readiness.
-
-```text
-my-joy-jar/
-├── database/
-│   ├── schema.sql
-│   └── seed.sql
-├── src/
-│   ├── config/
-│   │   └── database.js
-│   ├── constants/
-│   │   ├── entry-categories.js
-│   │   ├── http-status.js
-│   │   ├── response-messages.js
-│   │   ├── error-context.js
-│   │   ├── validation-messages.js
-│   │   ├── pagination.js
-│   │   ├── log-messages.js
-│   │   └── rate-limit.js
-│   ├── controllers/
-│   │   ├── create-entry-controller.js
-│   │   ├── create-entry-controller.test.js
-│   │   ├── delete-entry-controller.js
-│   │   ├── delete-entry-controller.test.js
-│   │   ├── get-all-entries-controller.js
-│   │   ├── get-all-entries-controller.test.js
-│   │   ├── get-random-entry-controller.js
-│   │   └── get-random-entry-controller.test.js
-│   ├── helpers/
-│   │   ├── create-pagination.js
-│   │   └── create-pagination.test.js
-│   ├── middleware/
-│   │   ├── error-handler.js
-│   │   ├── error-handler.test.js
-│   │   ├── create-entry-rate-limiter.js
-│   │   ├── create-entry-rate-limiter.api.test.js
-│   │   └── security-headers.api.test.js
-│   ├── repositories/
-│   │   ├── mysql-entry.repo.js
-│   │   ├── create-entry.repo.test.js
-│   │   ├── delete-entry.repo.test.js
-│   │   ├── get-all-entries.repo.test.js
-│   │   └── get-random-entry.repo.test.js
-│   ├── routes/
-│   │   ├── entries.js
-│   │   ├── entries.test.js
-│   │   ├── create-entry.api.test.js
-│   │   ├── delete-entry.api.test.js
-│   │   ├── get-all-entries.api.test.js
-│   │   ├── get-random-entry.api.test.js
-│   │   ├── health.js
-│   │   └── health.api.test.js
-│   ├── scripts/
-│   │   └── test-db-connection.js
-│   ├── validation/
-│   │   │   └── helpers
-│   │   │       ├── is-positive-integer-string.js
-│   │   │       └── is-positive-integer-string.test.js
-│   │   ├── validate-entry-input.js
-│   │   ├── validate-entry-input.test.js
-│   │   ├── validate-pagination.js
-│   │   └── validate-pagination.test.js
-│   ├── app.js
-│   └── server.js
-├── tests/
-│   ├── mock-entries.js
-│   ├── mock-entry-inputs.js
-│   └── test-helpers.js
-├── docs/
-├── documentation/
-│   ├── testing.md
-│   └── testing.json
-├── .env.example
-├── .gitignore
-├── .prettierignore
-├── .prettierrc.json
-├── api-requests.http
-├── eslint.config.js
-├── jest.config.js
-├── jsdoc.config.json
-├── package.json
-├── README.md
-└── webpack.config.cjs
-```
-
-`docs/` contains generated HTML documentation and is excluded from Git.
-`documentation/` contains the Markdown guides used to generate it.
+Entries can be viewed in pages or drawn at random.
 
 ## Current functionality
 
-The API currently supports:
-
-| Method   | Route                 | Purpose                   |
-| -------- | --------------------- | ------------------------- |
-| `GET`    | `/api/entries`        | Retrieve all entries      |
-| `POST`   | `/api/entries`        | Create a new entry        |
-| `GET`    | `/api/entries/random` | Retrieve a random entry   |
-| `DELETE` | `/api/entries/:id`    | Delete a specified entry  |
-| `HEALTH` | `/api/entries/health` | Confirm server responsive |
-
-## Database setup
-
-MyJoyJar uses MySQL to persist entries.
-
-The `database` directory contains:
-
-- `schema.sql` — creates the `my_joy_jar` database and `entries` table.
-- `seed.sql` — adds optional sample entries for local development and manual testing.
-
-### Environment variables
-
-Copy `.env.example` to a new local file named `.env` and provide your MySQL connection details:
-
-```env
-
-# Application config
-
-PORT=3000
-
-# Database config
-
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=your_mysql_username
-DB_PASSWORD=your_mysql_password
-DB_NAME=my_joy_jar
-```
-
-The `.env` file is ignored by Git and must not be committed.
-
-### Create and seed the database
-
-Using DBeaver or another MySQL client:
-
-1. Run `database/schema.sql` to create the database and table.
-2. Optionally run `database/seed.sql` to insert sample entries.
-
-Running `seed.sql` more than once will insert duplicate sample entries.
-
-Test the database connection from the project:
-
-```bash
-npm run db:test
-```
-
-A successful connection displays the database name and connection time.
-
-### Development workflow
-
-Use two terminals from the project root.
-
-In terminal 1, start Webpack in watch mode:
-
-```bash
-npm run dev
-```
-
-Wait for the first successful compilation. Webpack generates
-`dist/server.cjs` and rebuilds it when source files change.
-
-In terminal 2, start the development server with Nodemon:
-
-```bash
-npm run dev:server
-```
-
-Nodemon watches the generated bundle and automatically restarts the
-server when it changes.
-
-The API runs at http://localhost:3000.
-
-Stop both processes with Ctrl+C in their respective terminals.
-
-## Entry structure
-
-```json
-{
-  "id": 1,
-  "category": "gratitude",
-  "content": "I am grateful for having time to rest today.",
-  "createdAt": "2026-09-19T16:30:00.000Z"
-}
-```
-
-Supported categories:
-
-- `gratitude`
-- `compliment`
-- `joyful-moment`
-
-## Automated testing
-
-MyJoyJar uses Jest for unit tests and Supertest for API tests. Tests are kept alongside the code they exercise, with one API test file per endpoint.
-
-### Unit tests
-
-Unit tests cover:
-
-- controller success, validation, empty-result and failure responses;
-- entry input and ID validation;
-- route-to-controller wiring;
-- repository results, parameterised query arguments and database failures.
-
-Controller tests mock the repository. Repository tests exercise the real repository methods with a mocked `database.execute`.
-
-Shared fixtures and mock helpers reduce duplication. Tests use Arrange–Act–Assert, and ESM module mocks are registered before dynamically importing the module under test.
-
-Run unit tests:
-
-```bash
-npm run unit-test
-```
-
-Run unit tests with coverage:
-
-```bash
-npm run unit-test -- --coverage
-```
-
-The current suite contains 53 passing unit tests and reports 100% statement, branch, function and line coverage for the files measured by that run. This report does not include `app.js` or `server.js`.
-
-### API tests
-
-Supertest sends HTTP requests through the configured Express app, exercising routing, JSON request parsing, controllers, validation and error middleware.
-
-The 13 API tests cover all four endpoints, including successful requests, empty results, invalid input, missing entries and repository failures.
-
-The repository is mocked, so API tests do not require a running MySQL database. They verify HTTP behaviour rather than repeating repository interaction assertions.
-
-Run API tests:
-
-```bash
-npm run api-test
-```
-
-Run API tests with coverage:
-
-```bash
-npm run api-test -- --coverage
-```
-
-Run both suites:
-
-```bash
-npm test
-```
-
-### Testing scope
-
-Automated tests use mocked database results. They do not verify SQL execution, schema compatibility or persistence against a real MySQL database.
-
-Manual database and API checks complement these tests. Server startup has also been checked with `npm start`.
-
-### Code test coverage
-
-Run all unit and API tests together with Jest coverage:
-
-```bash
-npm run test:coverage
-```
-
-The command prints a coverage table in the terminal and generates an HTML
-report at `coverage/index.html`.
-
-Coverage includes application JavaScript files under `src/`, including
-files not imported by tests. Test files are excluded from measurement.
-Generated reports are excluded from Git.
-
-The combined report includes coverage from both unit and API tests.
-Validation exercised by unit tests therefore contributes to the overall
-report, even when individual API tests do not exercise every validation case.
-
-Currently, `server.js` and `src/scripts/test-db-connection.js` are not
-covered by the automated suite. They remain visible in the report.
-
-Coverage shows which code executed; it does not prove every behaviour is
-correct. Database configuration coverage also does not verify a real
-MySQL connection, and mocked repository tests do not execute SQL against
-a real database.
-
-### Coverage thresholds
-
-Controllers, middleware, repositories, routes and validation files must
-each achieve 100% statement, branch, function and line coverage.
-
-`npm run test:coverage` fails if these thresholds are not met.
-The regular `npm test` command does not enforce coverage thresholds.
-
-Startup and database diagnostic files remain included in the report
-without a coverage threshold.
-
-These checks run locally. Enforcing them on pull requests also requires
-CI to run the coverage command and a required check in GitHub.
-
-## Manual API testing
-
-The `api-requests.http` file contains example HTTP requests for manually testing the API.
-
-It includes:
-
-- requests to retrieve all entries;
-- requests to create valid entries;
-- invalid requests that demonstrate the validation error responses;
-- a request to retrieve a random entry;
-- requests to delete an entry by ID.
-
-Start the development server before sending the requests:
-
-```bash
-npm run dev
-```
-
-The requests can be run using a compatible VS Code HTTP client extension or copied into Postman.
-
-Morgan logs each HTTP request in the terminal running the development server, including the request method, route, response status, response time, and response size.
-
-## Continuous integration
-
-GitHub Actions runs quality checks on pull requests targeting `main`
-and on pushes to `main`.
-
-The workflow uses Node.js 24 on an Ubuntu runner to:
-
-- Install dependencies from the lockfile with `npm ci`.
-- Check formatting with Prettier.
-- Lint code with ESLint.
-- Run unit and API tests with coverage thresholds.
-- Build the server with Webpack.
-- Generate JSDoc documentation.
-
-The tests use mocked database access and do not require a running MySQL
-server.
-
-The workflow is defined in `.github/workflows/quality-checks.yml`.
-
-### Get entries
-
-`GET /api/entries` returns a page of entries, ordered newest first.
-Entries with matching creation timestamps are ordered by ID descending.
-
-#### Query parameters
-
-| Parameter | Default | Description                                      |
-| --------- | ------- | ------------------------------------------------ |
-| `page`    | 1       | Positive integer identifying the requested page. |
-| `limit`   | 10      | Positive integer page size, up to 100.           |
-
-Example:
-
-```http
-GET http://localhost:3000/api/entries?page=2&limit=10
-```
-
-#### Response
-
-Returns status 200 with an object containing `entries` and `pagination`.
-This replaces the previous array-only response.
-
-```json
-{
-  "entries": [
-    {
-      "id": 15,
-      "category": "gratitude",
-      "content": "I am grateful for a peaceful morning.",
-      "createdAt": "2026-10-12T12:00:00.000Z"
-    }
-  ],
-  "pagination": {
-    "page": 2,
-    "limit": 10,
-    "total": 11,
-    "totalPages": 2
-  }
-}
-```
-
-`total` counts all entries. `totalPages` is the total count divided by
-the page size, rounded up.
-
-An empty jar returns `entries: []`, `total: 0` and `totalPages: 0`.
-A page beyond the available results also returns an empty array with
-status 200, preserving the requested page number.
-
-#### Validation
-
-Parameters must be positive integer strings without leading zeros.
-Empty values, decimals, negative numbers, repeated parameters and unsafe
-integer values are rejected.
-
-A limit above 100 or an offset calculation outside the safe integer range
-is also rejected.
-
-Invalid parameters return status 400, for example:
-
-```json
-{
-  "message": "Validation errors.",
-  "errors": [
-    "Page must be a positive integer.",
-    "Limit must be no greater than 100."
-  ]
-}
-```
-
-#### Pagination limitations
-
-Entries and their total count are retrieved with separate queries.
-Concurrent inserts or deletes can affect their consistency and can shift
-entries between pages.
-
-## Creating an entry
-
-Send a POST request to:
-
-```http
-POST /api/entries
-```
-
-with a JSON body:
-
-```json
-{
-  "category": "joyful-moment",
-  "content": "I enjoyed sitting outside in the sunshine."
-}
-```
-
-A successful request returns `201 Created` and the new entry.
-
-The API rejects:
-
-- missing categories;
-- categories with an incorrect data type;
-- categories outside the supported values;
-- missing, blank, or non-string content.
-
-When a request contains multiple validation problems, the API returns all validation errors in an array.
-
-## Retrieving a random entry
-
-Send:
-
-```http
-GET /api/entries/random
-```
-
-The API returns one randomly selected entry. If the jar is empty, it returns an appropriate error response.
-
-## Deleting an entry
-
-Include the entry ID in the URL:
-
-```http
-DELETE /api/entries/3
-```
-
-A successful request returns the deleted entry. The API returns `400 Bad Request` if the ID is not a positive integer and `404 Not Found` when no entry has the requested ID.
-
-## Security middleware
-
-Helmet adds security-related HTTP response headers to successful and
-error responses, and removes the `X-Powered-By` header.
-
-The entry API allows 100 requests per client IP address within a
-15-minute window. Requests beyond the allowance receive status 429:
-
-    { "message": "Too many requests. Please try again later." }
-
-Rate-limit headers describe the allowance, and blocked responses include
-`Retry-After`, indicating how many seconds to wait before retrying.
-The `/health` endpoint is outside the entry API limit.
-
-The limiter uses an in-memory store. Counts reset when the server restarts
-and are not shared between server processes. A deployment with multiple
-instances would need a shared store. Proxy settings must also be reviewed
-for the actual hosting setup so client addresses are identified correctly.
-
-Malformed JSON request bodies receive status 400 with:
-
-    { "message": "Request body must contain valid JSON." }
-
-Unexpected application failures continue to receive a generic 500 response.
-
-## Documentation
-
-Generate the HTML documentation:
-
-```bash
-npm run docs
-```
-
-Open docs/index.html in your browser.
-The documentation includes this README as its homepage, a testing guide,
-and a reference generated from JSDoc comments in the source files.
-Documentation guides are maintained in documentation/.
-Generated HTML is written to docs/ and is excluded from Git.
+| Method   | Route                 | Purpose                    |
+| -------- | --------------------- | -------------------------- |
+| `GET`    | `/api/entries`        | Retrieve a page of entries |
+| `POST`   | `/api/entries`        | Create an entry            |
+| `GET`    | `/api/entries/random` | Retrieve a random entry    |
+| `DELETE` | `/api/entries/:id`    | Delete an entry            |
+| `GET`    | `/health`             | Check server liveness      |
+
+The API currently uses one shared collection of entries. User accounts, authentication and private jars are planned.
 
 ## Technology
 
@@ -559,152 +47,617 @@ Generated HTML is written to docs/ and is excluded from Git.
 - Supertest — HTTP assertions for API tests
 - JSDoc — generates HTML documentation from source comments
 - Helmet — security-related HTTP response headers
-- express-rate-limit — entry API request limitingx`x
+- express-rate-limit — entry API request limiting
+- GitHub Actions — automated quality checks
 
 ## Running the project locally
 
 ### Prerequisites
 
-- Node.js 24 LTS — developed and tested with Node.js 24.20.0
+- Node.js 24, matching the CI environment
 - npm
-- MySQL
-- DBeaver or another MySQL client
+- A running MySQL server
+- DBeaver or another MySQL client for running the setup scripts
 
 ### Installation
 
-Clone the repository:
+Clone the repository and install dependencies from the committed lockfile:
 
 ```bash
 git clone https://github.com/LCampbellDev/my-joy-jar.git
 cd my-joy-jar
+npm ci
 ```
 
-Install the dependencies:
+### Environment variables
 
-```bash
-npm install
+Copy `.env.example` to a local file named `.env` and provide your MySQL connection details:
+
+```dotenv
+# Application config
+PORT=3000
+
+# Database config
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=your_mysql_username
+DB_PASSWORD=your_mysql_password
+DB_NAME=my_joy_jar
 ```
 
-Start the development server:
+The `.env` file is ignored by Git and must not be committed.
 
-```bash
-npm run dev
-```
+### Create and seed the database
 
-The API runs at [http://localhost:3000](http://localhost:3000).
+The `database/` directory contains:
 
-## Available scripts
+- `schema.sql` — creates the `my_joy_jar` database and `entries` table.
+- `seed.sql` — adds optional sample entries for development and manual testing.
 
-```bash
-npm run dev
-```
+Using DBeaver or another MySQL client:
 
-Builds the server bundle with Webpack and watches for source changes.
+1. Run `database/schema.sql`.
+2. Optionally run `database/seed.sql`.
 
-```bash
-npm run dev:server
-```
+Running `seed.sql` more than once inserts duplicate sample entries.
 
-Starts the server with Nodemon and restarts it when the generated bundle changes.
-
-```bash
-npm run build
-```
-
-Builds the backend with Webpack, generating `dist/server.cjs`. Run this before `npm start`.
-
-```bash
-npm start
-```
-
-Starts the built server without watching for changes. Run `npm run build` first.
-
-```bash
-npm run lint
-```
-
-Checks the JavaScript files with ESLint.
-
-```bash
-npm run format
-```
-
-Formats supported files with Prettier.
-
-```bash
-npm run format:check
-```
-
-Checks formatting without changing files.
+Check the database connection:
 
 ```bash
 npm run db:test
 ```
 
-Tests the connection to the configured MySQL database.
+A successful connection displays the database name and connection time.
+
+### Development workflow
+
+Use two terminals from the project root.
+
+In terminal 1, start Webpack in watch mode:
 
 ```bash
-npm test
+npm run dev
 ```
 
-Runs the unit tests followed by the API tests.
+Wait for the first successful compilation. Webpack generates `dist/server.cjs` and rebuilds it when source files change.
+
+In terminal 2, start the server with Nodemon:
+
+```bash
+npm run dev:server
+```
+
+Nodemon watches the generated bundle and restarts the server when it changes. The `dev` script alone does not start the server.
+
+With the default port, the API runs at [http://localhost:3000](http://localhost:3000). Stop both processes with Ctrl+C in their respective terminals.
+
+### Build and start without watching
+
+Build the server, then run the generated bundle:
+
+```bash
+npm run build
+npm start
+```
+
+Rebuild and restart after source changes when using this workflow.
+
+## API reference
+
+Examples below use the default port, 3000.
+
+### Entry structure
+
+Entries are stored in MySQL. The API represents an entry as:
+
+```json
+{
+  "id": 1,
+  "category": "gratitude",
+  "content": "I am grateful for having time to rest today.",
+  "createdAt": "2026-10-12T12:00:00.000Z"
+}
+```
+
+Supported categories:
+
+- `gratitude`
+- `compliment`
+- `joyful-moment`
+
+The values in `src/constants/entry-categories.js` must remain consistent with the category check constraint in `database/schema.sql`.
+
+### Get entries
+
+`GET /api/entries` returns a page of entries, ordered by creation date descending. Entries with matching timestamps are ordered by ID descending.
+
+#### Query parameters
+
+| Parameter | Default | Description                                     |
+| --------- | ------- | ----------------------------------------------- |
+| `page`    | 1       | Positive integer identifying the requested page |
+| `limit`   | 10      | Positive integer page size, up to 100           |
+
+```http
+GET http://localhost:3000/api/entries?page=2&limit=10
+```
+
+#### Response
+
+Returns `200 OK` with `entries` and pagination metadata:
+
+```json
+{
+  "entries": [
+    {
+      "id": 15,
+      "category": "gratitude",
+      "content": "I am grateful for a peaceful morning.",
+      "createdAt": "2026-10-12T12:00:00.000Z"
+    }
+  ],
+  "pagination": {
+    "page": 2,
+    "limit": 10,
+    "total": 11,
+    "totalPages": 2
+  }
+}
+```
+
+`total` counts all entries. `totalPages` is the total divided by the page size, rounded up.
+
+An empty jar returns `entries: []`, `total: 0` and `totalPages: 0`. A page beyond the available results also returns an empty entries array with status 200, preserving the requested page number.
+
+#### Validation
+
+Query values must be positive integer strings without leading zeros. Empty values, decimals, negative numbers, repeated parameters and unsafe integer values are rejected.
+
+A limit above 100 or an offset calculation outside the safe integer range is also rejected.
+
+For example, `?page=0&limit=101` returns `400 Bad Request`:
+
+```json
+{
+  "message": "Validation errors.",
+  "errors": [
+    "Page must be a positive integer.",
+    "Limit must be no greater than 100."
+  ]
+}
+```
+
+#### Pagination limitations
+
+Entries and their total count are retrieved with separate queries. Concurrent inserts or deletes can affect their consistency and shift entries between pages.
+
+### Create an entry
+
+Send a JSON request body:
+
+```http
+POST http://localhost:3000/api/entries
+Content-Type: application/json
+
+{
+  "category": "joyful-moment",
+  "content": "I enjoyed sitting outside in the sunshine."
+}
+```
+
+A successful request returns `201 Created` with a message and the created entry:
+
+```json
+{
+  "message": "Entry created successfully.",
+  "entry": {
+    "id": 16,
+    "category": "joyful-moment",
+    "content": "I enjoyed sitting outside in the sunshine.",
+    "createdAt": "2026-10-12T13:00:00.000Z"
+  }
+}
+```
+
+The API rejects missing, non-string or unsupported categories, and missing, non-string or whitespace-only content. Valid content is trimmed before it is stored.
+
+Validation returns the first applicable error for each field, collecting category and content errors in that order. Invalid input returns `400 Bad Request`:
+
+```json
+{
+  "message": "Validation errors.",
+  "errors": ["Category is required.", "Content is required."]
+}
+```
+
+### Retrieve a random entry
+
+```http
+GET http://localhost:3000/api/entries/random
+```
+
+Returns `200 OK` with one randomly selected entry. An empty jar returns `404 Not Found`:
+
+```json
+{
+  "message": "No entries are available."
+}
+```
+
+### Delete an entry
+
+Include the entry ID in the URL:
+
+```http
+DELETE http://localhost:3000/api/entries/3
+```
+
+A successful request returns `200 OK` with a success message and the deleted entry.
+
+The ID must be a positive integer string without leading zeros. Invalid ID format returns `400 Bad Request`:
+
+```json
+{
+  "message": "Entry ID must be a positive integer."
+}
+```
+
+When no matching entry exists, the API returns `404 Not Found`:
+
+```json
+{
+  "message": "Entry not found."
+}
+```
+
+### Health check
+
+```http
+GET http://localhost:3000/health
+```
+
+Returns `200 OK`:
+
+```json
+{
+  "status": "ok"
+}
+```
+
+This is a liveness check: it confirms the server can respond to HTTP requests. It does not check MySQL connectivity or database readiness.
+
+## Security middleware and error responses
+
+### Security headers
+
+Helmet adds security-related response headers to successful and error responses, and removes `X-Powered-By`.
+
+Some headers primarily protect browser documents; their benefit is more limited for a JSON-only API.
+
+### Request limits
+
+The entry API allows 100 requests per client within a 15-minute window, using the package's IP-based client identification. Its default handling groups IPv6 addresses by subnet.
+
+Requests beyond the allowance receive `429 Too Many Requests`:
+
+```json
+{
+  "message": "Too many requests. Please try again later."
+}
+```
+
+Rate-limit headers describe the allowance. Blocked responses include `Retry-After`, indicating how many seconds to wait before retrying.
+
+The limiter runs before JSON parsing for entry API requests. The `/health` endpoint is outside this limit.
+
+Counts are held in memory, reset when the server restarts, and are not shared between server processes. A deployment with multiple instances would need a shared store. Proxy settings must be reviewed for the actual hosting setup so client addresses are identified correctly.
+
+### Malformed JSON and unexpected failures
+
+Malformed JSON request bodies return `400 Bad Request`:
+
+```json
+{
+  "message": "Request body must contain valid JSON."
+}
+```
+
+Unexpected application failures return `500 Internal Server Error` without exposing internal error details:
+
+```json
+{
+  "message": "Something went wrong. Please try again later."
+}
+```
+
+Security headers and rate limiting do not provide authentication or restrict access to individual users' entries.
+
+## Architecture and project structure
+
+The entry router maps endpoints to their controllers. Controllers validate requests, call repository methods and construct HTTP responses. The repository handles parameterised MySQL queries.
+
+Each entry operation has its own controller:
+
+- `get-all-entries-controller.js`
+- `get-random-entry-controller.js`
+- `create-entry-controller.js`
+- `delete-entry-controller.js`
+
+Controllers wrap repository failures with operation-specific context and preserve the original error using `cause`. Central middleware in `src/middleware/error-handler.js`, mounted last in `app.js`, handles error responses and logs unexpected failures.
+
+Morgan separately logs HTTP request summaries. Validation helpers check inputs, and application helpers build reusable data such as pagination metadata.
+
+### Project tree
+
+```text
+my-joy-jar/
+├── .github/
+│   └── workflows/
+│       └── quality-checks.yml
+├── database/
+│   ├── schema.sql
+│   └── seed.sql
+├── documentation/
+│   ├── testing.md
+│   └── testing.json
+├── src/
+│   ├── config/
+│   │   └── database.js
+│   ├── constants/
+│   │   ├── entry-categories.js
+│   │   ├── error-context.js
+│   │   ├── http-status.js
+│   │   ├── log-messages.js
+│   │   ├── pagination.js
+│   │   ├── rate-limit.js
+│   │   ├── response-messages.js
+│   │   └── validation-messages.js
+│   ├── controllers/
+│   │   ├── create-entry-controller.js
+│   │   ├── create-entry-controller.test.js
+│   │   ├── delete-entry-controller.js
+│   │   ├── delete-entry-controller.test.js
+│   │   ├── get-all-entries-controller.js
+│   │   ├── get-all-entries-controller.test.js
+│   │   ├── get-random-entry-controller.js
+│   │   └── get-random-entry-controller.test.js
+│   ├── helpers/
+│   │   ├── create-pagination.js
+│   │   └── create-pagination.test.js
+│   ├── middleware/
+│   │   ├── create-entry-rate-limiter.js
+│   │   ├── create-entry-rate-limiter.api.test.js
+│   │   ├── error-handler.js
+│   │   ├── error-handler.test.js
+│   │   └── security-headers.api.test.js
+│   ├── repositories/
+│   │   ├── mysql-entry.repo.js
+│   │   ├── create-entry.repo.test.js
+│   │   ├── delete-entry.repo.test.js
+│   │   ├── get-all-entries.repo.test.js
+│   │   └── get-random-entry.repo.test.js
+│   ├── routes/
+│   │   ├── entries.js
+│   │   ├── entries.test.js
+│   │   ├── create-entry.api.test.js
+│   │   ├── delete-entry.api.test.js
+│   │   ├── get-all-entries.api.test.js
+│   │   ├── get-random-entry.api.test.js
+│   │   ├── health.js
+│   │   └── health.api.test.js
+│   ├── scripts/
+│   │   └── test-db-connection.js
+│   ├── validation/
+│   │   ├── helpers/
+│   │   │   ├── is-positive-integer-string.js
+│   │   │   └── is-positive-integer-string.test.js
+│   │   ├── validate-entry-input.js
+│   │   ├── validate-entry-input.test.js
+│   │   ├── validate-pagination.js
+│   │   └── validate-pagination.test.js
+│   ├── app.js
+│   └── server.js
+├── tests/
+│   ├── mock-entries.js
+│   ├── mock-entry-inputs.js
+│   └── test-helpers.js
+├── docs/
+├── .env.example
+├── .gitignore
+├── .prettierignore
+├── .prettierrc.json
+├── api-requests.http
+├── eslint.config.js
+├── jest.config.js
+├── jsdoc.config.json
+├── package-lock.json
+├── package.json
+├── README.md
+└── webpack.config.cjs
+```
+
+`documentation/` contains maintained guides. `docs/` contains generated HTML and is excluded from Git. Other generated directories, such as `dist/` and `coverage/`, are also excluded from Git and are omitted from this tree.
+
+## Automated testing
+
+Jest runs unit and API tests. Supertest makes HTTP requests against Express apps. Tests are kept alongside the code they exercise, with shared fixtures and helpers in `tests/`.
+
+### Unit tests
+
+Unit tests cover:
+
+- Controller success, validation, empty-result and failure paths.
+- Entry input, integer-string and pagination validation.
+- Pagination metadata calculations.
+- Route-to-controller wiring.
+- Repository results, query parameters and database failures.
+- Error responses and delegation when headers have already been sent.
+
+Controller tests mock the repository. Repository tests exercise the real repository with a mocked `database.execute`.
+
+Tests use Arrange–Act–Assert. Suites with shared Jest mocks reset them before each test and configure the behaviour needed for that scenario. ESM module mocks are registered before dynamically importing the module under test.
+
+Run unit tests:
 
 ```bash
 npm run unit-test
 ```
 
-Runs unit tests, excluding `.api.test.js` files.
+### API tests
+
+API tests check entry endpoints, server health, security headers and rate limiting. They cover successful requests, pagination, empty results, invalid input, missing entries and failures.
+
+Entry endpoint tests send requests through the configured application with the repository mocked. Rate-limiter tests use a fresh, small Express app and limiter for each scenario.
+
+Assertions check HTTP status and response bodies, plus relevant repository interactions such as avoiding persistence for invalid requests.
+
+Run API tests:
 
 ```bash
 npm run api-test
 ```
 
-Runs the `.api.test.js` files.
+Run unit and API tests sequentially:
 
 ```bash
-npm run unit-test -- --coverage
+npm test
 ```
 
-Runs unit tests and generates a coverage report.
+### Coverage
+
+Run all tests together with coverage:
 
 ```bash
-npm run api-test -- --coverage
+npm run test:coverage
 ```
 
-Runs API tests and generates a coverage report.
+The command produces a terminal table, an HTML report at `coverage/index.html`, and JSON coverage data.
+
+Coverage includes application JavaScript under `src/`, including files not imported by tests. Test files are excluded from measurement. Generated reports are excluded from Git.
+
+The combined report includes code exercised by both unit and API tests. Validation covered by unit tests contributes even when API tests do not exercise every validation case.
+
+Controllers, helpers, middleware, repositories, routes and validation files must each achieve 100% statement, branch, function and line coverage. The coverage command fails if these thresholds are not met; `npm test` alone does not enforce them.
+
+`src/server.js` and `src/scripts/test-db-connection.js` remain visible as automated coverage gaps, without a coverage threshold.
+
+Separate unit-only or API-only coverage runs can be useful for investigation, but write to the same report directory and may fail thresholds for code that the selected suite does not exercise. Use the combined command for the project coverage check.
+
+### Testing scope
+
+Automated tests do not verify SQL execution, schema compatibility or persistence against a real MySQL database. Manual database and API checks complement the mocked suite.
+
+Coverage shows which code executed, not whether every behaviour is correct. Executing database configuration code does not prove a real connection worked.
+
+Failure-path tests may print expected console errors while passing. Read the assertions and final test result to distinguish expected logging from a failed test.
+
+See the [testing guide](documentation/testing.md) for additional conventions and examples.
+
+## Continuous integration
+
+The workflow in `.github/workflows/quality-checks.yml` runs on pull requests targeting `main`, pushes to `main` and manual runs.
+
+It uses Node.js 24 on an Ubuntu 24.04 runner to:
+
+1. Install dependencies from the lockfile with `npm ci`.
+2. Check formatting with Prettier.
+3. Lint code with ESLint.
+4. Run unit and API tests with coverage thresholds.
+5. Build the server with Webpack.
+6. Generate JSDoc documentation.
+
+The current suite does not need a MySQL service or database credentials in CI.
+
+Results are available in the pull request's Checks tab or the repository's Actions tab. Blocking merges on failed checks additionally requires the job to be configured as a required status check in repository settings.
+
+## Manual API testing
+
+Start the server using the two-terminal development workflow or `npm run build` followed by `npm start`.
+
+Use `api-requests.http` with a compatible VS Code HTTP client extension, or send requests with Postman. Use the API reference above for pagination and response examples.
+
+Useful manual checks include:
+
+- Default and requested entry pages.
+- Valid entry creation and content trimming.
+- Invalid category, content and pagination values.
+- Random selection.
+- Deleting an existing or missing entry.
+- `GET /health`.
+- Malformed JSON responses.
+
+Morgan prints request method, URL, status and response time in the server terminal. Controllers log operations; the central error handler logs unexpected failures.
+
+## Documentation
+
+Generate the HTML documentation:
+
+```bash
+npm run docs
+```
+
+Open `docs/index.html` in a browser.
+
+The generated documentation includes:
+
+- This README as its homepage.
+- The testing guide from `documentation/testing.md`.
+- A reference generated from JSDoc comments in application source files.
+
+The configuration is maintained in `jsdoc.config.json`. Guide sources live in `documentation/`; generated output lives in `docs/` and is excluded from Git.
+
+Test source files are excluded from the function reference. The testing guide explains their organisation, scope and conventions.
+
+## Available scripts
+
+| Command                 | Purpose                                                 |
+| ----------------------- | ------------------------------------------------------- |
+| `npm run dev`           | Build with Webpack and watch source changes             |
+| `npm run dev:server`    | Run the bundle with Nodemon and restart when it changes |
+| `npm run build`         | Generate `dist/server.cjs`                              |
+| `npm start`             | Run the built server without watching                   |
+| `npm run db:test`       | Check the configured MySQL connection                   |
+| `npm test`              | Run unit tests followed by API tests                    |
+| `npm run unit-test`     | Run tests excluding `.api.test.js` files                |
+| `npm run api-test`      | Run `.api.test.js` files                                |
+| `npm run test:coverage` | Run all tests together and enforce coverage thresholds  |
+| `npm run lint`          | Check JavaScript with ESLint                            |
+| `npm run lint:fix`      | Apply available ESLint automatic fixes                  |
+| `npm run format`        | Format supported files with Prettier                    |
+| `npm run format:check`  | Check formatting without changing files                 |
+| `npm run docs`          | Generate HTML documentation                             |
 
 ## Engineering goals
 
 This project provides a focused environment for practising:
 
-- designing REST endpoints with Node.js and Express;
-- applying DRY (Don’t Repeat Yourself) by extracting reusable validation, test fixtures and mock helpers;
-- separating routes, controllers, repositories, validation and configuration;
-- validating request data and returning useful HTTP responses;
-- collecting multiple validation errors in an array;
-- executing parameterised MySQL queries;
-- migrating from temporary in-memory data to persistent storage;
-- writing unit and API tests with Jest and Supertest;
-- mocking dependencies to test success and failure paths;
-- using coverage reports to identify untested code paths;
-- handling unexpected errors consistently.
+- REST API design with Node.js and Express.
+- Separation of routes, controllers, repositories, validation and configuration.
+- Useful extraction of shared rules, fixtures and helpers.
+- Input validation and predictable HTTP responses.
+- Parameterised SQL and persistent storage.
+- Pagination and consistent result ordering.
+- Unit and API tests with Jest and Supertest.
+- Dependency mocking and success, edge and failure-path testing.
+- Coverage reporting and thresholds.
+- Central error handling, request logging and security middleware.
+- Documentation and automated quality checks.
 
-The API uses Express REST routes to strengthen my understanding of HTTP, routing, middleware and data persistence before exploring GraphQL.
+The API uses Express REST routes to strengthen my understanding of HTTP, middleware and data persistence before exploring GraphQL.
 
 ## Next steps
 
-- Review the architecture and testing approach.
+- Review the architecture, logging and testing approach.
 - Add integration tests against a dedicated MySQL test database.
+- Add user authentication and entry ownership.
 - Build an accessible frontend.
 - Add end-to-end tests for complete user journeys.
 
 ## Future ideas
 
-Possible later features include:
-
-- filtering entries by category or date;
-- editing existing entries;
-- selecting daily, weekly, or monthly reflection prompts;
-- marking meaningful entries as favourites or exporting saved entries to a file;
-- integrating positive quotations from an external API;
-- offering a hand-drawn or retro-inspired visual theme.
+- Filter entries by category or date.
+- Edit existing entries.
+- Select daily, weekly or monthly reflection prompts.
+- Mark entries as favourites or export them.
+- Integrate positive quotations from an external API.
+- Explore a hand-drawn or retro-inspired visual theme.
