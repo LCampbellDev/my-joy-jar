@@ -18,13 +18,13 @@ Entries can be viewed in pages or drawn at random.
 
 ## Current functionality
 
-| Method | Route | Purpose |
-| --- | --- | --- |
-| `GET` | `/api/entries` | Retrieve a page of entries |
-| `POST` | `/api/entries` | Create an entry |
-| `GET` | `/api/entries/random` | Retrieve a random entry |
-| `DELETE` | `/api/entries/:id` | Delete an entry |
-| `GET` | `/health` | Check server liveness |
+| Method   | Route                 | Purpose                    |
+| -------- | --------------------- | -------------------------- |
+| `GET`    | `/api/entries`        | Retrieve a page of entries |
+| `POST`   | `/api/entries`        | Create an entry            |
+| `GET`    | `/api/entries/random` | Retrieve a random entry    |
+| `DELETE` | `/api/entries/:id`    | Delete an entry            |
+| `GET`    | `/health`             | Check server liveness      |
 
 The API currently uses one shared collection of entries. User accounts, authentication and private jars are planned.
 
@@ -173,10 +173,10 @@ The values in `src/constants/entry-categories.js` must remain consistent with th
 
 #### Query parameters
 
-| Parameter | Default | Description |
-| --- | --- | --- |
-| `page` | 1 | Positive integer identifying the requested page |
-| `limit` | 10 | Positive integer page size, up to 100 |
+| Parameter | Default | Description                                     |
+| --------- | ------- | ----------------------------------------------- |
+| `page`    | 1       | Positive integer identifying the requested page |
+| `limit`   | 10      | Positive integer page size, up to 100           |
 
 ```http
 GET http://localhost:3000/api/entries?page=2&limit=10
@@ -266,10 +266,7 @@ Validation returns the first applicable error for each field, collecting categor
 ```json
 {
   "message": "Validation errors.",
-  "errors": [
-    "Category is required.",
-    "Content is required."
-  ]
+  "errors": ["Category is required.", "Content is required."]
 }
 ```
 
@@ -613,22 +610,22 @@ Test source files are excluded from the function reference. The testing guide ex
 
 ## Available scripts
 
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Build with Webpack and watch source changes |
-| `npm run dev:server` | Run the bundle with Nodemon and restart when it changes |
-| `npm run build` | Generate `dist/server.cjs` |
-| `npm start` | Run the built server without watching |
-| `npm run db:test` | Check the configured MySQL connection |
-| `npm test` | Run unit tests followed by API tests |
-| `npm run unit-test` | Run tests excluding `.api.test.js` files |
-| `npm run api-test` | Run `.api.test.js` files |
-| `npm run test:coverage` | Run all tests together and enforce coverage thresholds |
-| `npm run lint` | Check JavaScript with ESLint |
-| `npm run lint:fix` | Apply available ESLint automatic fixes |
-| `npm run format` | Format supported files with Prettier |
-| `npm run format:check` | Check formatting without changing files |
-| `npm run docs` | Generate HTML documentation |
+| Command                 | Purpose                                                 |
+| ----------------------- | ------------------------------------------------------- |
+| `npm run dev`           | Build with Webpack and watch source changes             |
+| `npm run dev:server`    | Run the bundle with Nodemon and restart when it changes |
+| `npm run build`         | Generate `dist/server.cjs`                              |
+| `npm start`             | Run the built server without watching                   |
+| `npm run db:test`       | Check the configured MySQL connection                   |
+| `npm test`              | Run unit tests followed by API tests                    |
+| `npm run unit-test`     | Run tests excluding `.api.test.js` files                |
+| `npm run api-test`      | Run `.api.test.js` files                                |
+| `npm run test:coverage` | Run all tests together and enforce coverage thresholds  |
+| `npm run lint`          | Check JavaScript with ESLint                            |
+| `npm run lint:fix`      | Apply available ESLint automatic fixes                  |
+| `npm run format`        | Format supported files with Prettier                    |
+| `npm run format:check`  | Check formatting without changing files                 |
+| `npm run docs`          | Generate HTML documentation                             |
 
 ## Engineering goals
 
