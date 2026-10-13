@@ -18,13 +18,14 @@ Entries can be viewed in pages or drawn at random.
 
 ## Current functionality
 
-| Method   | Route                 | Purpose                    |
-| -------- | --------------------- | -------------------------- |
-| `GET`    | `/api/entries`        | Retrieve a page of entries |
-| `POST`   | `/api/entries`        | Create an entry            |
-| `GET`    | `/api/entries/random` | Retrieve a random entry    |
-| `DELETE` | `/api/entries/:id`    | Delete an entry            |
-| `GET`    | `/health`             | Check server liveness      |
+| Method   | Route                 | Purpose                     |
+| -------- | --------------------- | --------------------------- |
+| `GET`    | `/api/entries`        | Retrieve a page of entries  |
+| `POST`   | `/api/entries`        | Create an entry             |
+| `GET`    | `/api/entries/random` | Retrieve a random entry     |
+| `DELETE` | `/api/entries/:id`    | Delete an entry             |
+| `GET`    | `/health`             | Check server liveness       |
+| `GET`    | `/ready`              | Checks connection to MySQL. |
 
 The API currently uses one shared collection of entries. User accounts, authentication and private jars are planned.
 
@@ -310,13 +311,9 @@ When no matching entry exists, the API returns `404 Not Found`:
 }
 ```
 
-### Health check
+### Health and readiness checks
 
-```http
-GET http://localhost:3000/health
-```
-
-Returns `200 OK`:
+`GET /health` checks application liveness. It returns `200`:
 
 ```json
 {
@@ -324,7 +321,27 @@ Returns `200 OK`:
 }
 ```
 
-This is a liveness check: it confirms the server can respond to HTTP requests. It does not check MySQL connectivity or database readiness.
+`GET /ready` checks database readiness by running `SELECT 1`. This checks whether MySQL accepts a query without reading or changing application data.
+
+When the query succeeds, it returns `200`:
+
+```json
+{
+  "status": "ready"
+}
+```
+
+When the query fails, it returns `503`:
+
+```json
+{
+  "status": "not ready"
+}
+```
+
+Database failures are logged without exposing internal details in the response. The readiness check does not verify the database schema or every API operation.
+
+Both endpoints are outside the entry API rate limiter.
 
 ## Security middleware and error responses
 
@@ -411,7 +428,8 @@ my-joy-jar/
 │   │   ├── pagination.js
 │   │   ├── rate-limit.js
 │   │   ├── response-messages.js
-│   │   └── validation-messages.js
+│   │   ├── validation-messages.js
+│   │   └── health-status.js
 │   ├── controllers/
 │   │   ├── create-entry-controller.js
 │   │   ├── create-entry-controller.test.js
@@ -420,7 +438,9 @@ my-joy-jar/
 │   │   ├── get-all-entries-controller.js
 │   │   ├── get-all-entries-controller.test.js
 │   │   ├── get-random-entry-controller.js
-│   │   └── get-random-entry-controller.test.js
+│   │   ├── get-random-entry-controller.test.js
+│   │   ├── readiness-controller.js
+│   │   └── readiness-controller.test.js
 │   ├── helpers/
 │   │   ├── create-pagination.js
 │   │   └── create-pagination.test.js
@@ -435,7 +455,8 @@ my-joy-jar/
 │   │   ├── create-entry.repo.test.js
 │   │   ├── delete-entry.repo.test.js
 │   │   ├── get-all-entries.repo.test.js
-│   │   └── get-random-entry.repo.test.js
+│   │   ├── get-random-entry.repo.test.js
+│   │   └── database-health.repo.js
 │   ├── routes/
 │   │   ├── entries.js
 │   │   ├── entries.test.js
@@ -444,7 +465,9 @@ my-joy-jar/
 │   │   ├── get-all-entries.api.test.js
 │   │   ├── get-random-entry.api.test.js
 │   │   ├── health.js
-│   │   └── health.api.test.js
+│   │   ├── health.api.test.js
+│   │   ├── ready.js
+│   │   └── ready.api.test.js
 │   ├── scripts/
 │   │   └── test-db-connection.js
 │   ├── validation/
@@ -492,6 +515,7 @@ Unit tests cover:
 - Route-to-controller wiring.
 - Repository results, query parameters and database failures.
 - Error responses and delegation when headers have already been sent.
+- Readiness controller tests check successful and failed database checks using a mocked repository.
 
 Controller tests mock the repository. Repository tests exercise the real repository with a mocked `database.execute`.
 
@@ -510,6 +534,8 @@ API tests check entry endpoints, server health, security headers and rate limiti
 Entry endpoint tests send requests through the configured application with the repository mocked. Rate-limiter tests use a fresh, small Express app and limiter for each scenario.
 
 Assertions check HTTP status and response bodies, plus relevant repository interactions such as avoiding persistence for invalid requests.
+
+Readiness API tests check route wiring, response bodies and HTTP statuses using a mocked database.
 
 Run API tests:
 
@@ -584,9 +610,12 @@ Useful manual checks include:
 - Random selection.
 - Deleting an existing or missing entry.
 - `GET /health`.
+- `GET /ready` returns `200` with MySQL running.
+- Stop MySQL: `/ready` returns `503`, while `/health` still returns `200`.
+- Restart MySQL: `/ready` returns `200` again.
 - Malformed JSON responses.
 
-Morgan prints request method, URL, status and response time in the server terminal. Controllers log operations; the central error handler logs unexpected failures.
+Morgan prints request method, URL, status and response time in the server terminal. Controllers log operations; the central error handler logs unexpected failures. The readiness controller logs failed database checks and returns `503`.
 
 ## Documentation
 

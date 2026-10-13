@@ -1,2 +1,16 @@
-// TODO: Add a GET /ready endpoint to check MySQL readiness.
-// Return 200 when available or 503 when unavailable, with tests for both outcomes.
+import { Router } from 'express';
+import { readinessController } from '../controllers/readiness-controller';
+
+/**
+ * Creates a router for checking database readiness.
+ * Mounted at /ready by the Express application.
+ *
+ * @returns {Function} The configured Express router.
+ */
+export const createReadinessRouter = () => {
+  const router = Router();
+
+  router.get('/', readinessController);
+
+  return router;
+};

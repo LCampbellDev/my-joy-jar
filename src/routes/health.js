@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { HTTP_STATUS } from '../constants/http-status';
-
+import { HEALTH_STATUS } from '../constants/health-status';
 /**
  * Creates a router for checking whether the server is responding.
  * Mounted at /health. Does not check database connectivity.
@@ -12,7 +12,7 @@ export const createHealthRouter = () => {
 
   router.get('/', (req, res) => {
     return res.status(HTTP_STATUS.OK).json({
-      status: 'ok',
+      status: HEALTH_STATUS.OK,
     });
   });
 
