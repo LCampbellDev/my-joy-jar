@@ -1,7 +1,8 @@
 import { entryRepo } from '../repositories/mysql-entry.repo';
 import { HTTP_STATUS } from '../constants/http-status';
-import { RESPONSE_MESSAGES } from '../constants/response-messages';
-import { ERROR_CONTEXT } from '../constants/error-context';
+import { RESPONSE_MESSAGES } from '../constants/messages-responses';
+import { ERROR_CONTEXT } from '../constants/messages-error-context';
+import { LOG_MESSAGES } from '../constants/messages-logs';
 
 /**
  * Handles GET /api/entries/random.
@@ -15,7 +16,7 @@ import { ERROR_CONTEXT } from '../constants/error-context';
  */
 export const getRandomEntryController = async (req, res) => {
   try {
-    console.info('Fetching a random entry');
+    console.info(LOG_MESSAGES.FETCH_RANDOM_ENTRY);
 
     const entry = await entryRepo.getRandom();
 
@@ -27,8 +28,6 @@ export const getRandomEntryController = async (req, res) => {
 
     return res.status(HTTP_STATUS.OK).json(entry);
   } catch (error) {
-    console.error(ERROR_CONTEXT.FETCH_RANDOM_ENTRY, error);
-
     throw new Error(`${ERROR_CONTEXT.FETCH_RANDOM_ENTRY}: ${error.message}`, {
       cause: error,
     });

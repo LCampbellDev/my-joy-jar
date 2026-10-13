@@ -1,5 +1,5 @@
 import { PAGINATION } from '../constants/pagination';
-import { PAGINATION_VALIDATION_MESSAGES } from '../constants/validation-messages';
+import { PAGINATION_VALIDATION_MESSAGES } from '../constants/messages-validation';
 import { isPositiveIntegerString } from './helpers/is-positive-integer-string';
 
 /**

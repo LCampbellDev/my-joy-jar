@@ -1,5 +1,5 @@
 import { HTTP_STATUS } from '../constants/http-status';
-import { RESPONSE_MESSAGES } from '../constants/response-messages';
+import { RESPONSE_MESSAGES } from '../constants/messages-responses';
 
 /**
  * Handles errors passed through the Express middleware chain.

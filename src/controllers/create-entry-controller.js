@@ -1,8 +1,9 @@
 import { entryRepo } from '../repositories/mysql-entry.repo';
 import { validateEntryInput } from '../validation/validate-entry-input';
 import { HTTP_STATUS } from '../constants/http-status';
-import { RESPONSE_MESSAGES } from '../constants/response-messages';
-
+import { RESPONSE_MESSAGES } from '../constants/messages-responses';
+import { ERROR_CONTEXT } from '../constants/messages-error-context';
+import { LOG_MESSAGES } from '../constants/messages-logs';
 /**
  * Handles POST /api/entries.
  * Validates the request body and trims content before saving.
@@ -29,7 +30,7 @@ export const createEntryController = async (req, res) => {
   }
 
   try {
-    console.info('Creating entry');
+    console.info(LOG_MESSAGES.CREATE_ENTRY);
 
     const entry = await entryRepo.create({
       category,
@@ -41,9 +42,7 @@ export const createEntryController = async (req, res) => {
       entry,
     });
   } catch (error) {
-    console.error('Error creating entry', error);
-
-    throw new Error(`Error creating entry: ${error.message}`, {
+    throw new Error(`${ERROR_CONTEXT.CREATE_ENTRY}: ${error.message}`, {
       cause: error,
     });
   }

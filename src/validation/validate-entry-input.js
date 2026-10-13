@@ -1,5 +1,5 @@
 import { ALLOWED_ENTRY_CATEGORIES } from '../constants/entry-categories';
-import { ENTRY_VALIDATION_MESSAGES } from '../constants/validation-messages';
+import { ENTRY_VALIDATION_MESSAGES } from '../constants/messages-validation';
 
 /**
  * Checks whether a value is undefined, null or an empty string.
