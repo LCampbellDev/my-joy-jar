@@ -10,14 +10,14 @@ describe('errorHandler', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
-  });       
+  });
 
   it('returns status 400 when the JSON is malformed', () => {
     // Arrange
     const error = new SyntaxError('Unexpected end of JSON input');
     error.type = 'entity.parse.failed';
-      error.status = 400;
-      error.expose = true;
+    error.status = 400;
+    error.expose = true;
 
     const req = {};
     const res = createMockResponse();
@@ -32,9 +32,9 @@ describe('errorHandler', () => {
 
     // Assert
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith(
-      { message: 'Request body must contain valid JSON.' },
-    );
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Request body must contain valid JSON.',
+    });
     expect(consoleErrorSpy).not.toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
   });
@@ -137,6 +137,6 @@ describe('errorHandler', () => {
       message: 'Something went wrong. Please try again later.',
     });
     expect(consoleErrorSpy).toHaveBeenCalledWith('Request failed', error);
-    expect(next).not.toHaveBeenCalled();  
+    expect(next).not.toHaveBeenCalled();
   });
 });
