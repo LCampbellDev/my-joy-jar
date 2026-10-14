@@ -307,7 +307,7 @@ DELETE http://localhost:3000/api/entries/3
 
 A successful request returns `200 OK` with a success message and the deleted entry.
 
-The ID must be a positive integer string without leading zeros. Invalid ID format returns `400 Bad Request`:
+Entry IDs must be positive integer strings without leading zeros and within JavaScript’s safe integer range. Invalid ID format returns `400 Bad Request`:
 
 ```json
 {
@@ -427,6 +427,7 @@ my-joy-jar/
 │   ├── config/
 │   │   └── database.js
 │   ├── constants/
+│   │   ├── entry-content.js
 │   │   ├── entry-categories.js
 │   │   ├── error-context.js
 │   │   ├── http-status.js
@@ -449,7 +450,9 @@ my-joy-jar/
 │   │   └── readiness-controller.test.js
 │   ├── helpers/
 │   │   ├── create-pagination.js
-│   │   └── create-pagination.test.js
+│   │   ├── create-pagination.test.js
+│   │   ├── is-positive-integer-string.js
+│   │   └── is-positive-integer-string.test.js
 │   ├── middleware/
 │   │   ├── create-entry-rate-limiter.js
 │   │   ├── create-entry-rate-limiter.api.test.js
@@ -477,9 +480,6 @@ my-joy-jar/
 │   ├── scripts/
 │   │   └── test-db-connection.js
 │   ├── validation/
-│   │   ├── helpers/
-│   │   │   ├── is-positive-integer-string.js
-│   │   │   └── is-positive-integer-string.test.js
 │   │   ├── validate-entry-input.js
 │   │   ├── validate-entry-input.test.js
 │   │   ├── validate-pagination.js
@@ -535,7 +535,7 @@ npm run unit-test
 
 ### API tests
 
-API tests check entry endpoints, server health and database readiness, security headers and rate limiting. They cover successful requests, pagination, empty results, invalid input, missing entries and unexpected failures, as well as malformed JSON, oversized request bodies and unsupported content encoding.
+API tests check entry endpoints, server health and database readiness, security headers and rate limiting. They cover successful requests, pagination, empty results, invalid input, content-length limits, invalid or unsafe entry IDs, missing entries and unexpected failures. Request-parsing tests cover malformed JSON, oversized bodies and unsupported content encoding.
 
 Entry endpoint tests send requests through the configured application with the repository mocked. Rate-limiter tests use a fresh, small Express app and limiter for each scenario.
 
@@ -555,7 +555,7 @@ Run unit and API tests sequentially:
 npm test
 ```
 
-### Coverage
+### Test coverage
 
 Run all tests together with coverage:
 

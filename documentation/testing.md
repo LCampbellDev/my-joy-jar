@@ -1,4 +1,3 @@
-````markdown
 # Testing guide
 
 This guide explains how MyJoyJar tests are organised, how to run them,
@@ -9,17 +8,20 @@ and the conventions used when writing new tests.
 - `npm test`: run all unit and API tests.
 - `npm run unit-test`: run unit tests only.
 - `npm run api-test`: run API tests only.
+- `npm run test:coverage`: run full test and coverage checks.
 
 ## Test layers
 
-- Validation tests check accepted inputs and validation errors.
-- Repository tests check database operations using a mocked database.
-- Controller tests check validation, repository calls and responses.
-- Route tests check that endpoints use the intended controllers.
-- API tests use Supertest to check HTTP behaviour through the Express app,
-  with the repository mocked.
+- Validation tests check accepted inputs, validation errors and boundaries.
+- Helper tests check shared utilities such as pagination metadata.
+- Repository tests check queries, parameters, returned data and error propagation using a mocked database.
+- Controller tests check validation, repository calls and responses using mocked repositories.
+- Middleware tests check error responses, logging, delegation, security headers and rate limiting.
+- Route tests check that entry endpoints use the intended controllers.
+- API tests use Supertest to check HTTP behaviour through Express. Entry API tests mock the repository; readiness API tests mock the database directly.
+- `npm run db:test` runs a manual database connectivity check against the configured MySQL instance and closes the connection pool afterwards.
 
-The API tests do not verify a real MySQL connection or database behaviour.
+The Jest unit and API suites mock database access. They do not verify a real MySQL connection or execute SQL against MySQL. The database connectivity script checks a real connection, while manual API checks verify application behaviour against the database.
 
 ## Test names and ordering
 
@@ -55,7 +57,6 @@ it('returns an error when content is missing', () => {
   expect(validationErrors).toEqual(['Content is required.']);
 });
 ```
-````
 
 Omit Arrange when the test needs no preparation, such as calling a
 validator without an argument.
@@ -108,7 +109,7 @@ original error object:
 
 ```js
 // Act
-const result = entryRepo.getAll();
+const result = entryRepo.getAll({ limit: 10, offset: 0 });
 
 // Assert
 await expect(result).rejects.toBe(databaseError);
@@ -136,16 +137,34 @@ section of a rejection test; await the rejection assertions instead.
 API tests check that unexpected failures produce a generic 500 response
 without exposing database details.
 
+## Application code constants
+
+Application code uses shared constants for HTTP statuses, response messages
+and validation messages. Tests keep expected status numbers and messages
+literal so they independently check the API contract. Importing the same
+constants into assertions could allow an accidental change to pass unnoticed.
+
 ## Logging during tests
 
-Tests deliberately exercising failures may print error logs while passing.
-
 Morgan logs HTTP request summaries. The central error handler logs
-request failures. Controllers preserve error context without logging
-the same failure again.
+unexpected request failures. Entry controllers preserve error context
+without logging the same failure again. The readiness controller handles
+and logs its own database-check failures.
 
-These tests currently allow console output rather than mocking or
-asserting logging calls.
+Error-handler unit tests use `jest.spyOn(console, 'error')` to check logging.
+An empty mock implementation silences expected output while recording calls.
+
+Create the spy during Arrange, before calling the handler. Restore the
+original methods after each test:
+
+````js
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+
+Client-error tests check that the handler does not log an unexpected failure.
+Server-error tests check that it logs the context and original error.
+Other failure tests may still print expected error logs while passing.
 
 ## Before committing
 
@@ -155,7 +174,7 @@ Run:
 npm run format:check
 npm run lint
 npm test
-```
+````
 
 After application or build changes, also run:
 

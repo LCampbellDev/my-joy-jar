@@ -1,6 +1,7 @@
 /**
- * Context messages used when wrapping controller errors.
- * The central error handler logs the resulting errors.
+ * Context messages used when wrapping or logging operation failures.
+ * Entry controller errors are logged centrally.
+ * Readiness failures are handled and logged by the readiness controller.
  *
  * @type {Readonly<Record<string, string>>}
  */

@@ -11,6 +11,7 @@ export const databaseHealthRepo = {
    * @returns {Promise<void>} Resolves when the query succeeds.
    */
   async checkConnection() {
+    // Check that MySQL accepts a query without reading or changing application data.
     await database.execute('SELECT 1');
   },
 };

@@ -78,6 +78,25 @@ describe('POST /api/entries', () => {
     expect(entryRepo.create).not.toHaveBeenCalled();
   });
 
+  it('returns status 400 when the content exceeds the maximum length', async () => {
+    // Arrange
+    const input = {
+      category: 'gratitude',
+      content: 'a'.repeat(2001),
+    };
+
+    // Act
+    const response = await request(app).post('/api/entries').send(input);
+
+    // Assert
+    expect(response.status).toEqual(400);
+    expect(response.body).toEqual({
+      message: 'Validation errors.',
+      errors: ['Content must be no longer than 2000 characters.'],
+    });
+    expect(entryRepo.create).not.toHaveBeenCalled();
+  });
+
   it('returns status 413 when the request body is too large', async () => {
     // Arrange
     const input = {
