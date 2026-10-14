@@ -1,5 +1,6 @@
 import { ALLOWED_ENTRY_CATEGORIES } from '../constants/entry-categories';
 import { ENTRY_VALIDATION_MESSAGES } from '../constants/messages-validation';
+import { ENTRY_CONTENT } from '../constants/entry-content';
 
 /**
  * Checks whether a value is undefined, null or an empty string.
@@ -40,7 +41,8 @@ const validateCategory = (category) => {
  * Validates entry content.
  *
  * @private
- * @param {*} content - The content to validate.
+ * @param {*} content - Must be a string containing non-whitespace text,
+ *   no longer than ENTRY_CONTENT.MAX_LENGTH UTF-16 code units after trimming.
  * @returns {string|null} The first applicable error, or null if valid.
  */
 const validateContent = (content) => {
@@ -53,6 +55,11 @@ const validateContent = (content) => {
 
     case !content.trim():
       return ENTRY_VALIDATION_MESSAGES.CONTENT_CANNOT_BE_EMPTY;
+
+    case content.trim().length > ENTRY_CONTENT.MAX_LENGTH:
+      return ENTRY_VALIDATION_MESSAGES.CONTENT_TOO_LONG(
+        ENTRY_CONTENT.MAX_LENGTH,
+      );
 
     default:
       return null;
@@ -68,7 +75,8 @@ validator or adapt this validator to support optional fields. */
  *
  * @param {Object} [input={}] - The entry data to validate.
  * @param {*} [input.category] - Must be a supported category string.
- * @param {*} [input.content] - Must be a string containing non-whitespace text.
+ * @param {*} [input.content] - Must be a string containing non-whitespace text,
+ *   no longer than ENTRY_CONTENT.MAX_LENGTH UTF-16 code units after trimming.
  * @returns {string[]} Validation messages, or an empty array if valid.
  */
 export const validateEntryInput = ({ category, content } = {}) => {

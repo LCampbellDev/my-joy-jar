@@ -262,6 +262,8 @@ A successful request returns `201 Created` with a message and the created entry:
 
 The API rejects missing, non-string or unsupported categories, and missing, non-string or whitespace-only content. Valid content is trimmed before it is stored.
 
+Content is limited to 2,000 UTF-16 code units after trimming. Many emoji count as two units; composed emoji can count as more.
+
 Validation returns the first applicable error for each field, collecting category and content errors in that order. Invalid input returns `400 Bad Request`:
 
 ```json
@@ -271,10 +273,20 @@ Validation returns the first applicable error for each field, collecting categor
 }
 ```
 
+Possible error responses:
+
+- `400 Bad Request` — invalid entry data or malformed JSON.
+- `413 Content Too Large` — the request body exceeds the parser limit.
+- `415 Unsupported Media Type` — unsupported content encoding or charset.
+- `429 Too Many Requests` — the entry API rate limit is exceeded.
+- `500 Internal Server Error` — an unexpected server or database failure.
+
+See [Request parsing and unexpected failures](#request-parsing-and-unexpected-failures) for parsing-error response messages.
+
 ### Retrieve a random entry
 
 ```http
-GET http://localhost:3000/api/entries/random
+GET POST http://localhost:3000/api/entries
 ```
 
 Returns `200 OK` with one randomly selected entry. An empty jar returns `404 Not Found`:
@@ -369,23 +381,17 @@ The limiter runs before JSON parsing for entry API requests. The `/health` endpo
 
 Counts are held in memory, reset when the server restarts, and are not shared between server processes. A deployment with multiple instances would need a shared store. Proxy settings must be reviewed for the actual hosting setup so client addresses are identified correctly.
 
-### Malformed JSON and unexpected failures
+### Request parsing and unexpected failures
 
-Malformed JSON request bodies return `400 Bad Request`:
+Requests must contain valid JSON when sent with `Content-Type: application/json`.
 
-```json
-{
-  "message": "Request body must contain valid JSON."
-}
-```
+- Malformed JSON returns `400` with the message “Request body must contain valid JSON.”
+- Bodies exceeding the JSON parser’s default `100kb` limit (102,400 bytes) return `413`.
+- Other exposable parser errors retain their `4xx` status, such as `415` for unsupported content encoding.
+- These other parser errors use the message “The request could not be processed.”
+- Unexpected server failures return `500` with a generic message and are logged centrally.
 
-Unexpected application failures return `500 Internal Server Error` without exposing internal error details:
-
-```json
-{
-  "message": "Something went wrong. Please try again later."
-}
-```
+Internal error details are not included in API responses.
 
 Security headers and rate limiting do not provide authentication or restrict access to individual users' entries.
 
@@ -529,7 +535,7 @@ npm run unit-test
 
 ### API tests
 
-API tests check entry endpoints, server health, security headers and rate limiting. They cover successful requests, pagination, empty results, invalid input, missing entries and failures.
+API tests check entry endpoints, server health and database readiness, security headers and rate limiting. They cover successful requests, pagination, empty results, invalid input, missing entries and unexpected failures, as well as malformed JSON, oversized request bodies and unsupported content encoding.
 
 Entry endpoint tests send requests through the configured application with the repository mocked. Rate-limiter tests use a fresh, small Express app and limiter for each scenario.
 

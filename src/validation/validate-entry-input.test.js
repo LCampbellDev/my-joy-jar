@@ -118,6 +118,50 @@ describe('validateEntryInput', () => {
     expect(validationErrors).toEqual(['Content cannot be empty.']);
   });
 
+  it('accepts content at the maximum length', () => {
+    // Arrange
+    const input = {
+      ...validEntryInput,
+      content: 'a'.repeat(2000),
+    };
+
+    // Act
+    const validationErrors = validateEntryInput(input);
+
+    // Assert
+    expect(validationErrors).toEqual([]);
+  });
+
+  it('does not count surrounding whitespace towards the maximum length', () => {
+    // Arrange
+    const input = {
+      ...validEntryInput,
+      content: `  ${'a'.repeat(2000)}  `,
+    };
+
+    // Act
+    const validationErrors = validateEntryInput(input);
+
+    // Assert
+    expect(validationErrors).toEqual([]);
+  });
+
+  it('returns an error when content exceeds the maximum length', () => {
+    // Arrange
+    const input = {
+      ...validEntryInput,
+      content: 'a'.repeat(2001),
+    };
+
+    // Act
+    const validationErrors = validateEntryInput(input);
+
+    // Assert
+    expect(validationErrors).toEqual([
+      'Content must be no longer than 2000 characters.',
+    ]);
+  });
+
   // Combined Content and category errors and missing fields
   it('returns both required errors when both fields are missing', () => {
     // Arrange

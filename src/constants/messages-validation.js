@@ -10,6 +10,8 @@ export const ENTRY_VALIDATION_MESSAGES = {
   CONTENT_REQUIRED: 'Content is required.',
   CONTENT_MUST_BE_STRING: 'Content must be a string.',
   CONTENT_CANNOT_BE_EMPTY: 'Content cannot be empty.',
+  CONTENT_TOO_LONG: (maxLength) =>
+    `Content must be no longer than ${maxLength} characters.`,
 };
 
 /**
