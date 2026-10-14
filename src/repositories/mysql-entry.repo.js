@@ -49,7 +49,7 @@ export const entryRepo = {
    *
    * @memberof module:repositories/mysql-entry.entryRepo
    * @static
-   * 
+   *
    * @param {Object} options - Validated pagination options.
    * @param {number} options.limit - Maximum number of entries to retrieve.
    * @param {number} options.offset - Number of entries to skip.
@@ -105,7 +105,7 @@ export const entryRepo = {
    *
    * @memberof module:repositories/mysql-entry.entryRepo
    * @static
-   * 
+   *
    * @param {Object} input - The validated entry data.
    * @param {string} input.category - The entry category.
    * @param {string} input.content - The trimmed entry text.
@@ -123,7 +123,7 @@ export const entryRepo = {
 
   /**
    * Retrieves an entry and deletes it if found.
-   * 
+   *
    * @memberof module:repositories/mysql-entry.entryRepo
    * @static
    *
