@@ -4,7 +4,7 @@ export default {
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'html', 'json'],
   coverageThreshold: {
-    './src/{controllers,helpers, middleware,repositories,routes,validation}/**/*.js':
+    './src/{controllers,helpers,middleware,repositories,routes,validation}/**/*.js':
       {
         statements: 100,
         branches: 100,

@@ -1,5 +1,5 @@
 import { entryRepo } from '../repositories/mysql-entry.repo';
-import { isPositiveIntegerString } from '../validation/helpers/is-positive-integer-string';
+import { isPositiveIntegerString } from '../helpers/is-positive-integer-string';
 import { HTTP_STATUS } from '../constants/http-status';
 import { RESPONSE_MESSAGES } from '../constants/messages-responses';
 import { ERROR_CONTEXT } from '../constants/messages-error-context';
@@ -7,8 +7,9 @@ import { LOG_MESSAGES } from '../constants/messages-logs';
 
 /**
  * Handles DELETE /api/entries/:id.
- * Validates the URL ID and converts it to a number before deleting.
- * Responds with 200 and the deleted entry, 400 for an invalid ID,
+ * Validates that the URL ID is a positive integer string without leading zeros
+ * and converts it to a number within JavaScript's safe integer range.
+ * Responds with 200 and the deleted entry, 400 for an invalid or unsafe ID,
  * or 404 if the entry does not exist.
  * Repository failures are wrapped with context and rethrown for central error middleware.
  *
@@ -18,14 +19,13 @@ import { LOG_MESSAGES } from '../constants/messages-logs';
  */
 export const deleteEntryController = async (req, res) => {
   const { id } = req.params;
+  const entryId = Number(id);
 
-  if (!isPositiveIntegerString(id)) {
+  if (!isPositiveIntegerString(id) || !Number.isSafeInteger(entryId)) {
     return res.status(HTTP_STATUS.BAD_REQUEST).json({
       message: RESPONSE_MESSAGES.INVALID_ENTRY_ID,
     });
   }
-
-  const entryId = Number(id);
 
   try {
     console.info(LOG_MESSAGES.DELETE_ENTRY, { entryId });

@@ -20,23 +20,6 @@ describe('createEntryController', () => {
     jest.resetAllMocks();
   });
 
-  it('returns status 400 when the request body is missing', async () => {
-    // Arrange
-    const req = {};
-    const res = createMockResponse();
-
-    // Act
-    await createEntryController(req, res);
-
-    // Assert
-    expect(entryRepo.create).not.toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({
-      message: 'Validation errors.',
-      errors: expect.any(Array),
-    });
-  });
-
   it('creates an entry and returns status 201', async () => {
     // Arrange
     entryRepo.create.mockResolvedValue(mockEntry);
@@ -63,6 +46,23 @@ describe('createEntryController', () => {
     expect(res.json).toHaveBeenCalledWith({
       message: 'Entry created successfully.',
       entry: mockEntry,
+    });
+  });
+
+  it('returns status 400 when the request body is missing', async () => {
+    // Arrange
+    const req = {};
+    const res = createMockResponse();
+
+    // Act
+    await createEntryController(req, res);
+
+    // Assert
+    expect(entryRepo.create).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Validation errors.',
+      errors: ['Category is required.', 'Content is required.'],
     });
   });
 

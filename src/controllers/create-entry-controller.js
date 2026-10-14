@@ -4,11 +4,12 @@ import { HTTP_STATUS } from '../constants/http-status';
 import { RESPONSE_MESSAGES } from '../constants/messages-responses';
 import { ERROR_CONTEXT } from '../constants/messages-error-context';
 import { LOG_MESSAGES } from '../constants/messages-logs';
+
 /**
  * Handles POST /api/entries.
  * Validates the request body and trims content before saving.
  * Responds with 201 and the created entry, or 400 with validation errors.
-Repository failures are wrapped with context and rethrown for central error middleware.
+ * Repository failures are wrapped with context and rethrown for central error middleware.
  *
  * @param {Object} req - The Express request containing category and content in its body.
  * @param {Object} res - The Express response used to send JSON.

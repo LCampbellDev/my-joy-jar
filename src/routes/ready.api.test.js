@@ -29,7 +29,7 @@ describe('GET /ready', () => {
     expect(response.body).toEqual({
       status: 'ready',
     });
-    // Check that MySQL accepts a query without reading or changing application data.
+
     expect(database.execute).toHaveBeenCalledWith('SELECT 1');
   });
 

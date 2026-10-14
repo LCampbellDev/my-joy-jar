@@ -8,12 +8,12 @@ import { createPagination } from '../helpers/create-pagination';
 
 /**
  * Handles GET /api/entries with optional page and limit query parameters.
- * Responds with 200 and entries plus pagination metadata,
- * or 400 when pagination parameters are invalid.
- * or an empty array if no entries exist.
+ * Responds with 200 and entries plus pagination metadata.
+ * The entries array is empty when no entries match the requested page.
+ * Responds with 400 when pagination parameters are invalid.
  * Repository failures are wrapped with context and rethrown for central error middleware.
  *
- * @param {Object} req - The Express request; no request data is used.
+ *  @param {Object} req - The Express request containing optional page and limit query parameters.
  * @param {Object} res - The Express response used to send JSON.
  * @returns {Promise<Object>} The Express response after sending JSON.
  */

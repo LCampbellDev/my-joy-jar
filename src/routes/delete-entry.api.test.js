@@ -33,17 +33,27 @@ describe('DELETE /api/entries/:id', () => {
     expect(entryRepo.delete).toHaveBeenCalledWith(mockEntry.id);
   });
 
-  it('returns status 400 when the entry ID is invalid', async () => {
-    // Act
-    const response = await request(app).delete('/api/entries/abc');
+  it.each([
+    ['letters', 'abc'],
+    ['zero', '0'],
+    ['a leading zero', '01'],
+    ['an unsafe integer', '9007199254740993'],
+  ])(
+    'returns status 400 when the entry ID contains %s',
+    async (description, id) => {
+      // Arrange is supplied by the test case.
 
-    // Assert
-    expect(response.status).toEqual(400);
-    expect(response.body).toEqual({
-      message: 'Entry ID must be a positive integer.',
-    });
-    expect(entryRepo.delete).not.toHaveBeenCalled();
-  });
+      // Act
+      const response = await request(app).delete(`/api/entries/${id}`);
+
+      // Assert
+      expect(response.status).toEqual(400);
+      expect(response.body).toEqual({
+        message: 'Entry ID must be a positive integer.',
+      });
+      expect(entryRepo.delete).not.toHaveBeenCalled();
+    },
+  );
 
   it('returns status 404 when the entry does not exist', async () => {
     // Arrange

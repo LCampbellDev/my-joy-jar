@@ -1,5 +1,5 @@
 /**
- * Informational messages for application operations.
+ * Log messages for entry operations and database connection checks.
  *
  * @type {Readonly<Record<string, string>>}
  */

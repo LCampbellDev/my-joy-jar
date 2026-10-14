@@ -1,7 +1,7 @@
 /**
  * MySQL data access operations for MyJoyJar entries.
  *
- * @file
+ * @module repositories/mysql-entry
  */
 
 /**
@@ -47,6 +47,9 @@ export const entryRepo = {
    * Retrieves a page of entries and the total entry count.
    * Orders entries newest first, using ID to break timestamp ties.
    *
+   * @memberof module:repositories/mysql-entry.entryRepo
+   * @static
+   *
    * @param {Object} options - Validated pagination options.
    * @param {number} options.limit - Maximum number of entries to retrieve.
    * @param {number} options.offset - Number of entries to skip.
@@ -78,6 +81,8 @@ export const entryRepo = {
   /**
    * Retrieves one randomly selected entry.
    *
+   * @memberof module:repositories/mysql-entry.entryRepo
+   * @static
    * @returns {Promise<Entry|null>} An entry, or null if the jar is empty.
    */
   async getRandom() {
@@ -98,6 +103,9 @@ export const entryRepo = {
   /**
    * Inserts an entry and retrieves it using its generated ID.
    *
+   * @memberof module:repositories/mysql-entry.entryRepo
+   * @static
+   *
    * @param {Object} input - The validated entry data.
    * @param {string} input.category - The entry category.
    * @param {string} input.content - The trimmed entry text.
@@ -115,6 +123,9 @@ export const entryRepo = {
 
   /**
    * Retrieves an entry and deletes it if found.
+   *
+   * @memberof module:repositories/mysql-entry.entryRepo
+   * @static
    *
    * @param {number|string} id - The entry ID, supplied as a number or numeric string.
    * @returns {Promise<Entry|null>} The deleted entry, or null if no matching entry was found.

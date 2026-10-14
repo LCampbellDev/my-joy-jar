@@ -2,7 +2,8 @@
  * Validation messages for entry category and content.
  * CATEGORY_UNSUPPORTED builds a message from the allowed categories.
  */
-export const ENTRY_VALIDATION_MESSAGES = {
+export const ENTRY_VALIDATION_MESSAGES = Object.freeze({
+  // Keep all existing properties.
   CATEGORY_REQUIRED: 'Category is required.',
   CATEGORY_MUST_BE_STRING: 'Category must be a string.',
   CATEGORY_UNSUPPORTED: (categories) =>
@@ -10,7 +11,9 @@ export const ENTRY_VALIDATION_MESSAGES = {
   CONTENT_REQUIRED: 'Content is required.',
   CONTENT_MUST_BE_STRING: 'Content must be a string.',
   CONTENT_CANNOT_BE_EMPTY: 'Content cannot be empty.',
-};
+  CONTENT_TOO_LONG: (maxLength) =>
+    `Content must be no longer than ${maxLength} characters.`,
+});
 
 /**
  * Validation messages for entry pagination query parameters.

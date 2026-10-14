@@ -1,6 +1,6 @@
 import { PAGINATION } from '../constants/pagination';
 import { PAGINATION_VALIDATION_MESSAGES } from '../constants/messages-validation';
-import { isPositiveIntegerString } from './helpers/is-positive-integer-string';
+import { isPositiveIntegerString } from '../helpers/is-positive-integer-string';
 
 /**
  * Parses a positive integer query value, using a default when omitted.
