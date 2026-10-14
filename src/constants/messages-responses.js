@@ -13,4 +13,5 @@ export const RESPONSE_MESSAGES = Object.freeze({
   INTERNAL_ERROR: 'Something went wrong. Please try again later.',
   RATE_LIMIT_EXCEEDED: 'Too many requests. Please try again later.',
   INVALID_JSON: 'Request body must contain valid JSON.',
+  INVALID_REQUEST: 'The request could not be processed.',
 });
