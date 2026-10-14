@@ -8,8 +8,9 @@ import { createEntryRateLimiter } from './middleware/create-entry-rate-limiter';
 import { createReadinessRouter } from './routes/ready';
 
 /**
- * Express application configured with request logging,
- * JSON body parsing, entry routes and central error handling.
+ * Express application configured with request logging, security headers,
+ * entry API rate limiting, JSON body parsing, health and readiness routes,
+ * entry routes and central error handling.
  */
 const app = express();
 

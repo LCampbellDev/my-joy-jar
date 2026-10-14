@@ -7,8 +7,9 @@ import { LOG_MESSAGES } from '../constants/messages-logs';
 
 /**
  * Handles DELETE /api/entries/:id.
- * Validates the URL ID and converts it to a number before deleting.
- * Responds with 200 and the deleted entry, 400 for an invalid ID,
+ * Validates that the URL ID is a positive integer string without leading zeros
+ * and converts it to a number within JavaScript's safe integer range.
+ * Responds with 200 and the deleted entry, 400 for an invalid or unsafe ID,
  * or 404 if the entry does not exist.
  * Repository failures are wrapped with context and rethrown for central error middleware.
  *
