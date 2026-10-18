@@ -1,9 +1,9 @@
 /**
  * Validation messages for entry category and content.
  * CATEGORY_UNSUPPORTED builds a message from the allowed categories.
- * 
+ *
  * @constant
-* */
+ * */
 export const ENTRY_VALIDATION_MESSAGES = Object.freeze({
   // Keep all existing properties.
   CATEGORY_REQUIRED: 'Category is required.',

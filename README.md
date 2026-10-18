@@ -602,11 +602,39 @@ The current suite does not need a MySQL service or database credentials in CI.
 
 Results are available in the pull request's Checks tab or the repository's Actions tab. Blocking merges on failed checks additionally requires the job to be configured as a required status check in repository settings.
 
+## Interactive API documentation
+
+Swagger UI provides interactive documentation for the entry, health and
+readiness endpoints.
+
+Start the application using the development workflow, or run:
+
+```bash
+npm run build
+npm start
+```
+
+Open [Swagger UI](http://localhost:3000/api-docs/).
+
+Expand an endpoint, select **Try it out**, enter any required parameters or
+request body, and select **Execute**. Swagger UI displays the request URL,
+HTTP status and response body.
+
+Executing requests calls the running API. Entry operations use the configured
+MySQL database: POST creates entries and DELETE removes them. Existing
+validation, security middleware and entry API rate limits still apply.
+
+The OpenAPI description lives in `src/openapi/`, separated into entry paths,
+health paths, schemas and reusable responses. `index.js` assembles these into
+the document served by `src/routes/api-docs.js`.
+
+Swagger UI documents HTTP behaviour. The generated JSDoc reference documents
+JavaScript functions and their parameters and return values.
+
 ## Manual API testing
 
-Start the server using the two-terminal development workflow or `npm run build` followed by `npm start`.
-
-Use `api-requests.http` with a compatible VS Code HTTP client extension, or send requests with Postman. Use the API reference above for pagination and response examples.
+Start the server using the development workflow described above.
+Use Swagger UI at /api-docs/, api-requests.http with a compatible VS Code HTTP client extension, or Postman. Swagger UI is convenient for documented requests; the other tools are useful for malformed JSON and deliberately invalid inputs.
 
 Useful manual checks include:
 
@@ -620,6 +648,8 @@ Useful manual checks include:
 - Stop MySQL: `/ready` returns `503`, while `/health` still returns `200`.
 - Restart MySQL: `/ready` returns `200` again.
 - Malformed JSON responses.
+- Content at and above the 2,000 UTF-16 code-unit limit after trimming.
+- Invalid entry IDs, including zero, leading zeros and unsafe integers.
 
 Morgan prints request method, URL, status and response time in the server terminal. Controllers log operations; the central error handler logs unexpected failures. The readiness controller logs failed database checks and returns `503`.
 
