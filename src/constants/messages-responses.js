@@ -1,6 +1,6 @@
 /**
  * Success and error messages returned in API responses.
- *
+ * @constant
  * @type {Readonly<Record<string, string>>}
  */
 export const RESPONSE_MESSAGES = Object.freeze({

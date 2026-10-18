@@ -1,6 +1,7 @@
 /**
  * Log messages for entry operations and database connection checks.
  *
+ * @constant
  * @type {Readonly<Record<string, string>>}
  */
 export const LOG_MESSAGES = Object.freeze({

@@ -1,6 +1,7 @@
 /**
  * HTTP status codes used by the API.
  *
+ * @constant
  * @type {Readonly<Record<string, number>>}
  */
 export const HTTP_STATUS = Object.freeze({

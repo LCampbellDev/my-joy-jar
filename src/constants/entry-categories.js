@@ -1,7 +1,7 @@
 /**
  * Supported entry categories, frozen to prevent modification.
  * Keep these values in sync with chk_entry_category in database/schema.sql.
- *
+ * @constant
  * @type {ReadonlyArray<string>}
  */
 export const ALLOWED_ENTRY_CATEGORIES = Object.freeze([

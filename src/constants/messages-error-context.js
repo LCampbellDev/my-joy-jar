@@ -3,6 +3,7 @@
  * Entry controller errors are logged centrally.
  * Readiness failures are handled and logged by the readiness controller.
  *
+ * @constant
  * @type {Readonly<Record<string, string>>}
  */
 export const ERROR_CONTEXT = Object.freeze({
